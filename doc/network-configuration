@@ -1,0 +1,119 @@
+﻿Configurações a partir da bancada 1
+
+------------------------------------------------------------------------------
+
+CONFIGURAÇÃO DOS TUX'S:
+
+route -n -> verificar rotas de cada tux 
+
+TUX1:
+
+# ifconfig eth0 down
+# ifconfig eth0 172.16.10.1/24
+# route add default gw 172.16.10.254
+
+TUX2:
+
+# ifconfig eth0 down
+# ifconfig eth0 172.16.11.1/24
+# route add -net 172.16.10.0/24 gw 172.16.11.253
+# route add default gw 172.16.11.254
+
+TUX4:
+
+# ifconfig eth0 down
+# ifconfig eth1 down
+# ifconfig eth0 172.16.10.254/24
+# ifconfig eth1 172.16.11.253/24
+# route add default gw 172.16.11.254
+
+# echo 1 > /proc/sys/net/ipv4/ip_forward
+# echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+
+------------------------------------------------------------------------------
+
+CONFIGURAR SWITCH:
+
+escrever 'en' ou 'enable' e o switch pede a password, escrever '8nortel'
+"show vlan brief" -> mostra vlan
+caso peça para apagar vlan -> conf t-> no vlan XX (em que XX são os últimos dois digitos do nome da VLAN)
+
+// depende da bancada
+> conf t
+> vlan 10
+> exit
+> vlan 11
+> exit
+
+> configure terminal
+> interface fastethernet 0/1
+> switchport mode access
+> switchport access vlan 10
+> exit
+
+> interface fastethernet 0/2
+> switchport mode access
+> switchport access vlan 11
+> exit
+
+> interface fastethernet 0/4
+> switchport mode access
+> switchport access vlan 10
+> exit
+
+> interface fastethernet 0/3
+> switchport mode access
+> switchport access vlan 11
+> exit
+
+> interface fastethernet 0/5
+> switchport mode access
+> switchport access vlan 11
+> exit
+
+// os fastethernet dependem das portas no switch, alterem dependendo da porta utilizada normalmente uso:
+tux1   > ligado ao switch na porta 1 (fastethernet 0/1)
+tux2   > ligado ao switch na porta 2 (fastethernet 0/2)
+tux4   > ligado ao switch na porta 3 (fastethernet 0/3) (a segunda rede do tux4 eth0)
+tux4   > ligado ao switch na porta 4 (fastethernet 0/4)
+router > ligado ao switch na porta 5 (fastethernet 0/5)
+
+------------------------------------------------------------------------------
+
+CONFIGURAR ROUTER:
+
+user:root
+pass:8nortel
+
+'show ip route' -> visualização das rotas dinâmicas
+'ip route prefix mask' -> visualização das rotas estáticas 
+
+> conf t
+> interface gigabitethernet 0/0
+> ip address 172.16.11.254 255.255.255.0
+> no shutdown
+> ip nat inside
+> exit
+
+// Na sala ao lado é 172.16.2.19 255.255.255.0 o 19 varia da bancada
+> interface gigabitethernet 0/1
+> ip address 172.16.1.19 255.255.255.0
+> no shutdown
+> ip nat outside
+> exit
+
+> ip nat pool ovrld 172.16.1.19 172.16.1.19 prefix 24
+> ip nat inside source list 1 pool ovrld overload
+> access-list 1 permit 172.16.10.0 0.0.0.7
+> access-list 1 permit 172.16.11.0 0.0.0.7
+> ip route 0.0.0.0 0.0.0.0 172.16.1.254	
+> ip route 172.16.10.0 255.255.255.0 172.16.11.253
+> end 
+
+------------------------------------------------------------------------------
+
+CONFIGURAR DNS:
+
+Em todos os tux's (principalmente no 1, onde vai ser feito o download)
+
+add/edit line in /etc/resolv.conf file -> nameserver 172.16.1.1
