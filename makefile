@@ -2,7 +2,7 @@
 CCC = gcc
 
 # C++ compiler flags (-g -O2 -Wall)
-CCFLAGS = -g -O3 -Wall
+CCFLAGS = -g -O3 -Wall -std=gnu99
 
 # source files
 SRC = $(wildcard src/*.c)

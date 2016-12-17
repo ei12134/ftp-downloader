@@ -5,6 +5,7 @@
 #include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
 #include <regex.h>
 #include <errno.h>
 #include <unistd.h>

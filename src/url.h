@@ -1,18 +1,22 @@
 #ifndef _URL_H_
 #define _URL_H_
 
+#include <ctype.h>
 #include <string.h>
-#include <netdb.h>
 #include <stdio.h>
+#include <strings.h>
 #include <stdlib.h>
 #include <regex.h>
 #include <errno.h>
+#include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
 typedef char url_content[256];
+
+#define h_addr h_addr_list[0] /* for backward compatibility */
 
 typedef struct URL {
 	url_content user; // string to user
