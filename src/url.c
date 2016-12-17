@@ -28,13 +28,6 @@ int parse_url(url* url, const char* urlStr)
 
 	memcpy(tempURL, urlStr, strlen(urlStr));
 
-	// For resiliency, programs interpreting URLs should treat upper case letters
-	// as equivalent to lower case in scheme names
-	// (e.g., allow "HTTP" as well as "http").
-	for (int i = 0; tempURL[i]; i++) {
-		tempURL[i] = tolower(tempURL[i]);
-	}
-
 	if (strchr(tempURL, target) != NULL) {
 		user_password_mode = 1;
 		activeExpression = (char*) user_pw_regex;
@@ -90,6 +83,12 @@ int parse_url(url* url, const char* urlStr)
 		}
 
 		strcat(path, "/");
+	}
+	// For resiliency, programs interpreting URLs should treat upper case letters
+	// as equivalent to lower case in scheme names
+	// (e.g., allow "HTTP" as well as "http").
+	for (int i = 0; path[i]; i++) {
+		path[i] = tolower(path[i]);
 	}
 	strcpy(url->path, path);
 
