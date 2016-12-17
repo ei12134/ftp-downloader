@@ -3,7 +3,8 @@
 #include "ftp.h"
 #include "url.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 	if (argc != 2) {
 		fprintf(stdout,
 				"Usage: %s ftp://[<user>:<password>@]<host>/<url-path>\n",
@@ -32,22 +33,8 @@ int main(int argc, char** argv) {
 	ftp ftp;
 	connect_ftp(&ftp, url.ip, url.port);
 
-	// Verifying username
 	const char* user = strlen(url.user) ? url.user : "anonymous";
-
-	// Verifying password
-	char* password;
-	if (strlen(url.password)) {
-		password = url.password;
-	} else {
-		char buf[100];
-		printf("You are now entering in anonymous mode.\n");
-		printf("Please insert your college email as password: ");
-		while (strlen(fgets(buf, 100, stdin)) < 14)
-			printf("\nIncorrect input, please try again: ");
-		password = (char*) malloc(strlen(buf));
-		strncat(password, buf, strlen(buf) - 1);
-	}
+	const char* password = strlen(url.password) ? url.password : "";
 
 	// Sending credentials to server
 	if (login_ftp(&ftp, user, password)) {

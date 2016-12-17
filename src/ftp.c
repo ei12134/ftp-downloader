@@ -1,14 +1,15 @@
 #include "ftp.h"
 
-static int connect_socket(const char* ip, int port) {
+static int connect_socket(const char* ip, int port)
+{
 	int sockfd;
 	struct sockaddr_in server_addr;
 
 	// server address handling
 	bzero((char*) &server_addr, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_addr.s_addr = inet_addr(ip); /*32 bit Internet address network byte ordered*/
-	server_addr.sin_port = htons(port); /*server TCP port must be network byte ordered */
+	server_addr.sin_addr.s_addr = inet_addr(ip); // 32 bit Internet address network byte ordered
+	server_addr.sin_port = htons(port); // server TCP port must be network byte ordered
 
 	// open an TCP socket
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -17,8 +18,8 @@ static int connect_socket(const char* ip, int port) {
 	}
 
 	// connect to the server
-	if (connect(sockfd, (struct sockaddr *) &server_addr, sizeof(server_addr))
-			< 0) {
+	if (connect(sockfd, (struct sockaddr *) &server_addr,
+			sizeof(server_addr)) < 0) {
 		perror("connect()");
 		return -1;
 	}
@@ -26,12 +27,13 @@ static int connect_socket(const char* ip, int port) {
 	return sockfd;
 }
 
-int connect_ftp(ftp* ftp, const char* ip, int port) {
+int connect_ftp(ftp* ftp, const char* ip, int port)
+{
 	int socketfd;
 	char rd[1024];
 
 	if ((socketfd = connect_socket(ip, port)) < 0) {
-		printf("ERROR: Cannot connect socket.\n");
+		fprintf(stderr, "Error: Cannot connect socket.\n");
 		return 1;
 	}
 
@@ -39,26 +41,27 @@ int connect_ftp(ftp* ftp, const char* ip, int port) {
 	ftp->data_socket_fd = 0;
 
 	if (read_ftp(ftp, rd, sizeof(rd))) {
-		printf("ERROR: ftpRead failure.\n");
+		fprintf(stderr, "Error: ftpRead failure.\n");
 		return 1;
 	}
 
 	return 0;
 }
 
-int login_ftp(ftp* ftp, const char* user, const char* password) {
+int login_ftp(ftp* ftp, const char* user, const char* password)
+{
 	char sd[1024];
 
 	// username
 	sprintf(sd, "USER %s\r\n", user);
 	if (send_ftp(ftp, sd, strlen(sd))) {
-		printf("ERROR: ftpSend failure.\n");
+		fprintf(stderr, "Error: ftpSend failure.\n");
 		return 1;
 	}
 
 	if (read_ftp(ftp, sd, sizeof(sd))) {
-		printf(
-				"ERROR: Access denied reading username response.\nftpRead failure.\n");
+		fprintf(stderr,
+				"Error: Access denied reading username response.\nftpRead failure.\n");
 		return 1;
 	}
 
@@ -68,54 +71,60 @@ int login_ftp(ftp* ftp, const char* user, const char* password) {
 	// password
 	sprintf(sd, "PASS %s\r\n", password);
 	if (send_ftp(ftp, sd, strlen(sd))) {
-		printf("ERROR: ftpSend failure.\n");
+		fprintf(stderr, "Error: ftpSend failure.\n");
 		return 1;
 	}
 
 	if (read_ftp(ftp, sd, sizeof(sd))) {
-		printf(
-				"ERROR: Access denied reading password response.\nftpRead failure.\n");
+		fprintf(stderr,
+				"Error: Access denied reading password response.\nftpRead failure.\n");
 		return 1;
 	}
 
 	return 0;
 }
 
-int cwd_ftp(ftp* ftp, const char* path) {
+int cwd_ftp(ftp* ftp, const char* path)
+{
 	char cwd[1024];
 
 	sprintf(cwd, "CWD %s\r\n", path);
 	if (send_ftp(ftp, cwd, strlen(cwd))) {
-		printf("ERROR: Cannot send path to CWD.\n");
+		fprintf(stderr, "Error: Cannot send path to CWD.\n");
 		return 1;
 	}
 
 	if (read_ftp(ftp, cwd, sizeof(cwd))) {
-		printf("ERROR: Cannot send path to change directory.\n");
+		fprintf(stderr,
+				"Error: Cannot send path to change directory.\n");
 		return 1;
 	}
 
 	return 0;
 }
 
-int passive_ftp(ftp* ftp) {
+int passive_ftp(ftp* ftp)
+{
 	char pasv[1024] = "PASV\r\n";
 	if (send_ftp(ftp, pasv, strlen(pasv))) {
-		printf("ERROR: Cannot enter in passive mode.\n");
+		fprintf(stderr, "Error: Cannot enter in passive mode.\n");
 		return 1;
 	}
 
 	if (read_ftp(ftp, pasv, sizeof(pasv))) {
-		printf("ERROR: None information received to enter in passive mode.\n");
+		fprintf(stderr,
+				"Error: None information received to enter in passive mode.\n");
 		return 1;
 	}
 
 	// starting process information
 	int ipPart1, ipPart2, ipPart3, ipPart4;
 	int port1, port2;
-	if ((sscanf(pasv, "227 Entering Passive Mode (%d,%d,%d,%d,%d,%d)", &ipPart1,
-			&ipPart2, &ipPart3, &ipPart4, &port1, &port2)) < 0) {
-		printf("ERROR: Cannot process information to calculating port.\n");
+	if ((sscanf(pasv, "227 Entering Passive Mode (%d,%d,%d,%d,%d,%d)",
+			&ipPart1, &ipPart2, &ipPart3, &ipPart4, &port1, &port2))
+			< 0) {
+		fprintf(stderr,
+				"Error: Cannot process information to calculating port.\n");
 		return 1;
 	}
 
@@ -125,60 +134,63 @@ int passive_ftp(ftp* ftp) {
 	// forming ip
 	if ((sprintf(pasv, "%d.%d.%d.%d", ipPart1, ipPart2, ipPart3, ipPart4))
 			< 0) {
-		printf("ERROR: Cannot form ip address.\n");
+		fprintf(stderr, "Error: Cannot form ip address.\n");
 		return 1;
 	}
 
 	// calculating new port
 	int portResult = port1 * 256 + port2;
 
-	printf("IP: %s\n", pasv);
-	printf("PORT: %d\n", portResult);
+	fprintf(stderr, "IP: %s\n", pasv);
+	fprintf(stderr, "PORT: %d\n", portResult);
 
 	if ((ftp->data_socket_fd = connect_socket(pasv, portResult)) < 0) {
-		printf(
-				"ERROR: Incorrect file descriptor associated to ftp data socket fd.\n");
+		fprintf(stderr,
+				"Error: Incorrect file descriptor associated to ftp data socket fd.\n");
 		return 1;
 	}
 
 	return 0;
 }
 
-int retr_ftp(ftp* ftp, const char* filename) {
+int retr_ftp(ftp* ftp, const char* filename)
+{
 	char retr[1024];
 
 	sprintf(retr, "RETR %s\r\n", filename);
 	if (send_ftp(ftp, retr, strlen(retr))) {
-		printf("ERROR: Cannot send filename.\n");
+		fprintf(stderr, "Error: Cannot send filename.\n");
 		return 1;
 	}
 
 	if (read_ftp(ftp, retr, sizeof(retr))) {
-		printf("ERROR: None information received.\n");
+		fprintf(stderr, "Error: None information received.\n");
 		return 1;
 	}
 
 	return 0;
 }
 
-int download_ftp(ftp* ftp, const char* filename) {
+int download_ftp(ftp* ftp, const char* filename)
+{
 	FILE* file;
 	int bytes;
 
 	if (!(file = fopen(filename, "w"))) {
-		printf("ERROR: Cannot open file.\n");
+		fprintf(stderr, "Error: Cannot open file.\n");
 		return 1;
 	}
 
 	char buf[1024];
 	while ((bytes = read(ftp->data_socket_fd, buf, sizeof(buf)))) {
 		if (bytes < 0) {
-			printf("ERROR: Nothing was received from data socket fd.\n");
+			fprintf(stderr,
+					"Error: Nothing was received from data socket fd.\n");
 			return 1;
 		}
 
 		if ((bytes = fwrite(buf, bytes, 1, file)) < 0) {
-			printf("ERROR: Cannot write data in file.\n");
+			fprintf(stderr, "Error: Cannot write data in file.\n");
 			return 1;
 		}
 	}
@@ -189,17 +201,18 @@ int download_ftp(ftp* ftp, const char* filename) {
 	return 0;
 }
 
-int disconnect_ftp(ftp* ftp) {
+int disconnect_ftp(ftp* ftp)
+{
 	char disc[1024];
 
 	if (read_ftp(ftp, disc, sizeof(disc))) {
-		printf("ERROR: Cannot disconnect account.\n");
+		fprintf(stderr, "Error: Cannot disconnect account.\n");
 		return 1;
 	}
 
 	sprintf(disc, "QUIT\r\n");
 	if (send_ftp(ftp, disc, strlen(disc))) {
-		printf("ERROR: Cannot send QUIT command.\n");
+		fprintf(stderr, "Error: Cannot send QUIT command.\n");
 		return 1;
 	}
 
@@ -209,26 +222,28 @@ int disconnect_ftp(ftp* ftp) {
 	return 0;
 }
 
-int send_ftp(ftp* ftp, const char* str, size_t size) {
+int send_ftp(ftp* ftp, const char* str, size_t size)
+{
 	int bytes;
 
 	if ((bytes = write(ftp->control_socket_fd, str, size)) <= 0) {
-		printf("WARNING: Nothing was send.\n");
+		fprintf(stderr, "Warning: Nothing was send.\n");
 		return 1;
 	}
 
-	printf("Bytes send: %d\nInfo: %s\n", bytes, str);
+	fprintf(stderr, "Bytes send: %d\nInfo: %s\n", bytes, str);
 
 	return 0;
 }
 
-int read_ftp(ftp* ftp, char* str, size_t size) {
+int read_ftp(ftp* ftp, char* str, size_t size)
+{
 	FILE* fp = fdopen(ftp->control_socket_fd, "r");
 
 	do {
 		memset(str, 0, size);
 		str = fgets(str, size, fp);
-		printf("%s", str);
+		fprintf(stdout, "%s", str);
 	} while (!('1' <= str[0] && str[0] <= '5') || str[3] != ' ');
 
 	return 0;
