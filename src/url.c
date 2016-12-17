@@ -11,7 +11,7 @@ void init_url(url* url)
 }
 
 const char* user_pw_regex =
-		"ftp://([([A-Za-z0-9])*:([A-Za-z0-9])*@])*([A-Za-z0-9.~-])+/([[A-Za-z0-9/~._-])+";
+		"ftp://([A-Za-z0-9])+:([A-Za-z0-9])+@([A-Za-z0-9.~-])+/([[A-Za-z0-9/~._-])+";
 const char* anonymous_regex = "ftp://([A-Za-z0-9.~-])+/([[A-Za-z0-9/~._-])+";
 
 int parse_url(url* url, const char* urlStr)
@@ -65,11 +65,11 @@ int parse_url(url* url, const char* urlStr)
 		memcpy(url->password, element, strlen(element));
 	}
 
-	//saving host
+	// Setting host
 	strcpy(element, process_until_char(tempURL, '/'));
 	memcpy(url->host, element, strlen(element));
 
-	//saving url path
+	// Setting URL path
 	char* path = (char*) malloc(strlen(tempURL));
 	int startPath = 1;
 	while (strchr(tempURL, '/')) {
@@ -86,7 +86,7 @@ int parse_url(url* url, const char* urlStr)
 	}
 	strcpy(url->path, path);
 
-	// saving filename
+	// Setting filename
 	strcpy(url->filename, tempURL);
 
 	free(tempURL);
@@ -98,12 +98,12 @@ int parse_url(url* url, const char* urlStr)
 	return 0;
 }
 
-int get_ip_by_hostname(url* url)
+int get_host_ip(url* url)
 {
 	struct hostent* h;
 
 	if ((h = gethostbyname(url->host)) == NULL) {
-		herror("gethostbyname");
+		herror("get_host_ip");
 		return 1;
 	}
 

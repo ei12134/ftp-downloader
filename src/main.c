@@ -12,24 +12,21 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	///////////// URL PROCESS /////////////
+	// Uniform resource locator parser
 	url url;
 	init_url(&url);
 
-	// start parsing argv[1] to URL components
 	if (parse_url(&url, argv[1]))
 		return -1;
 
-	// edit url ip by hostname
-	if (get_ip_by_hostname(&url)) {
-		printf("ERROR: Cannot find ip to hostname %s.\n", url.host);
+	if (get_host_ip(&url)) {
+		printf("Error: Cannot find ip to hostname %s.\n", url.host);
 		return -1;
 	}
 
 	printf("\nThe IP received to %s was %s\n", url.host, url.ip);
 
-	///////////// FTP CLIENT PROCESS /////////////
-
+	// File transfer protocol client
 	ftp ftp;
 	connect_ftp(&ftp, url.ip, url.port);
 
@@ -38,20 +35,20 @@ int main(int argc, char** argv)
 
 	// Sending credentials to server
 	if (login_ftp(&ftp, user, password)) {
-		printf("ERROR: Cannot login user %s\n", user);
+		printf("Error: Cannot login user %s\n", user);
 		return -1;
 	}
 
 	// Changing directory
 	if (cwd_ftp(&ftp, url.path)) {
-		printf("ERROR: Cannot change directory to the folder of %s\n",
+		printf("Error: Cannot change directory to the folder of %s\n",
 				url.filename);
 		return -1;
 	}
 
 	// Entry in passive mode
 	if (passive_ftp(&ftp)) {
-		printf("ERROR: Cannot entry in passive mode\n");
+		printf("Error: Cannot entry in passive mode\n");
 		return -1;
 	}
 

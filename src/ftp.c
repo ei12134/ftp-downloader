@@ -41,7 +41,7 @@ int connect_ftp(ftp* ftp, const char* ip, int port)
 	ftp->data_socket_fd = 0;
 
 	if (read_ftp(ftp, rd, sizeof(rd))) {
-		fprintf(stderr, "Error: ftpRead failure.\n");
+		fprintf(stderr, "Error: read_ftp failure.\n");
 		return 1;
 	}
 
@@ -55,7 +55,7 @@ int login_ftp(ftp* ftp, const char* user, const char* password)
 	// username
 	sprintf(sd, "USER %s\r\n", user);
 	if (send_ftp(ftp, sd, strlen(sd))) {
-		fprintf(stderr, "Error: ftpSend failure.\n");
+		fprintf(stderr, "Error: send_ftp failure.\n");
 		return 1;
 	}
 
@@ -71,13 +71,13 @@ int login_ftp(ftp* ftp, const char* user, const char* password)
 	// password
 	sprintf(sd, "PASS %s\r\n", password);
 	if (send_ftp(ftp, sd, strlen(sd))) {
-		fprintf(stderr, "Error: ftpSend failure.\n");
+		fprintf(stderr, "Error: send_ftp failure.\n");
 		return 1;
 	}
 
 	if (read_ftp(ftp, sd, sizeof(sd))) {
 		fprintf(stderr,
-				"Error: Access denied reading password response.\nftpRead failure.\n");
+				"Error: Access denied reading password response.\nread_ftp failure.\n");
 		return 1;
 	}
 
