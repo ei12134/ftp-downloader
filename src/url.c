@@ -84,12 +84,7 @@ int parse_url(url* url, const char* urlStr)
 
 		strcat(path, "/");
 	}
-	// For resiliency, programs interpreting URLs should treat upper case letters
-	// as equivalent to lower case in scheme names
-	// (e.g., allow "HTTP" as well as "http").
-	for (int i = 0; path[i]; i++) {
-		path[i] = tolower(path[i]);
-	}
+
 	strcpy(url->path, path);
 
 	// Setting filename

@@ -11,13 +11,13 @@ static int connect_socket(const char* ip, int port)
 	server_addr.sin_addr.s_addr = inet_addr(ip); // 32 bit Internet address network byte ordered
 	server_addr.sin_port = htons(port); // server TCP port must be network byte ordered
 
-	// open an TCP socket
+	// open a TCP socket
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		perror("socket()");
 		return -1;
 	}
 
-	// connect to the server
+	// connect to the FTP server
 	if (connect(sockfd, (struct sockaddr *) &server_addr,
 			sizeof(server_addr)) < 0) {
 		perror("connect()");
@@ -52,7 +52,7 @@ int login_ftp(ftp* ftp, const char* user, const char* password)
 {
 	char sd[1024];
 
-	// username
+	// send the user
 	sprintf(sd, "USER %s\r\n", user);
 	if (send_ftp(ftp, sd, strlen(sd))) {
 		fprintf(stderr, "Error: send_ftp failure.\n");
@@ -68,7 +68,7 @@ int login_ftp(ftp* ftp, const char* user, const char* password)
 	// cleaning buffer
 	memset(sd, 0, sizeof(sd));
 
-	// password
+	// send the password
 	sprintf(sd, "PASS %s\r\n", password);
 	if (send_ftp(ftp, sd, strlen(sd))) {
 		fprintf(stderr, "Error: send_ftp failure.\n");
@@ -107,13 +107,13 @@ int passive_ftp(ftp* ftp)
 {
 	char pasv[1024] = "PASV\r\n";
 	if (send_ftp(ftp, pasv, strlen(pasv))) {
-		fprintf(stderr, "Error: Cannot enter in passive mode.\n");
+		fprintf(stderr, "Error: Failed to enter in passive mode.\n");
 		return 1;
 	}
 
 	if (read_ftp(ftp, pasv, sizeof(pasv))) {
 		fprintf(stderr,
-				"Error: None information received to enter in passive mode.\n");
+				"Error: No information received to enter in passive mode.\n");
 		return 1;
 	}
 
@@ -131,7 +131,7 @@ int passive_ftp(ftp* ftp)
 	// cleaning buffer
 	memset(pasv, 0, sizeof(pasv));
 
-	// forming ip
+	// format IP address
 	if ((sprintf(pasv, "%d.%d.%d.%d", ipPart1, ipPart2, ipPart3, ipPart4))
 			< 0) {
 		fprintf(stderr, "Error: Cannot form ip address.\n");
@@ -231,7 +231,7 @@ int send_ftp(ftp* ftp, const char* str, size_t size)
 		return 1;
 	}
 
-	fprintf(stderr, "Bytes send: %d\nInfo: %s\n", bytes, str);
+	fprintf(stderr, "Bytes sent: %d\nInfo: %s\n", bytes, str);
 
 	return 0;
 }

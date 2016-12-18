@@ -1,0 +1,6 @@
+\select@language {portuguese}
+\contentsline {section}{\numberline {1}Introdu\IeC {\c c}\IeC {\~a}o}{1}{section.1}
+\contentsline {section}{\numberline {2}Aplica\IeC {\c c}\IeC {\~a}o de download}{1}{section.2}
+\contentsline {section}{\numberline {3}Conclus\IeC {\~o}es}{4}{section.3}
+\contentsline {section}{\numberline {A}C\IeC {\'o}digo fonte}{5}{appendix.A}
+\contentsline {subsection}{\numberline {A.1}Camada de aplica\IeC {\c c}\IeC {\~a}o}{5}{subsection.A.1}
