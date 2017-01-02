@@ -86,17 +86,17 @@ Apesar da introdução do nome de utilizador seguido de password serem facultati
 \subsection*{Análise de URL}
 Após a leitura e compreensão do \texttt{RFC1738}, desenhou-se uma estrutura de dados com a finalidade de armazenar a informação extraída da análise de um link URL recebido pela linha de comandos. Quando fornecidos, são guardados na estrutura referida, o nome de utilizador, a password, o host, ip, path e nome do ficheiro em arrays de caracteres independentes. Para além disso, é também definida a porta 21 como a predefinida na ligação de controlo do protocolo de FTP. À semelhança do que é referido no \texttt{RFC1738}, caracteres capitalizados são interpretados como caracteres minúsculos, admitindo ftp da mesma forma que FTP.
 
-Para se poder resolver o endereço de IP armazenado na estrutura de URL, é feita uma chamada à função \texttt{gethostbyname} que permite a obtenção do enderço de uma máquina a partir do nome e retorna uma estrutura do tipo \texttt{hostent} contendo o endereço na variável \texttt{h\_addr} que é posteriormente convertido para um array de chars com o auxílio da função \texttt{inet\_ntoa}.
+Para se poder resolver o endereço de IP armazenado na estrutura de URL, é feita uma chamada à função \texttt{gethostbyname} que permite a obtenção do endereço de uma máquina a partir do nome e retorna uma estrutura do tipo \texttt{hostent} contendo o endereço na variável \texttt{h\_addr} que é posteriormente convertido para um array de chars com o auxílio da função \texttt{inet\_ntoa}.
 
 \subsection*{Cliente de FTP}
-O cliente de FTP liga-se através de um socket TCP ao servidor de FTP identificado pelo endereço de IP acima mencionado e à porta 21 e estabelece uma ligação de controlo de comunicação, comunicando com uma sêquencia de comandos de transferência FTP que lhe são enviados ao estilo do protocolo Telnet: 
+O cliente de FTP liga-se através de um socket TCP ao servidor de FTP identificado pelo endereço de IP acima mencionado e à porta 21 e estabelece uma ligação de controlo de comunicação, comunicando com uma sequência de comandos de transferência FTP que lhe são enviados ao estilo do protocolo Telnet: 
 
 \begin{labeling}{alligator}
 \item [\textbf{USER user}] envio do nome de utilizador sob a forma de uma string que identifica o utilizador no servidor remoto.
-\item [\textbf{PASS pass}] envio da palavra-passe completando a identificação no sistema de identificação e controlo de acesso do servidor.
+\item [\textbf{PASS pass}] envio da palavra passe completando a identificação no sistema de identificação e controlo de acesso do servidor.
 \item [\textbf{CWD path}] indicação do directório que contém o ficheiro requerido para download e sobre o qual se pretende trabalhar.
 \item [\textbf{PASV}] comando que pede ao servidor para ficar à escuta numa porta de dados diferente da porta usada pelo serviço de controlo. Este comando recebe uma resposta que contém o endereço e a porta na qual o servidor ficou à escuta para poder estabelecer uma outra ligação TCP usada para transferência de dados.
-\item [\textbf{RETR filename}] commando \texttt{retrieve} que pede ao servidor que inicie a transmissão de uma cópia do ficheiro especificado pelo campo \texttt{filename} usando a nova ligação estabelecida ao endereço e porta recebidos pelo comando anterior.
+\item [\textbf{RETR filename}] comando \texttt{retrieve} que pede ao servidor que inicie a transmissão de uma cópia do ficheiro especificado pelo campo \texttt{filename} usando a nova ligação estabelecida ao endereço e porta recebidos pelo comando anterior.
 \end{labeling}
 
 Uma vez estabelecida a ligação dedicada de transmissão de dados, estes vão sendo recebidos de forma ordenada pelo cliente de FTP e armazenados em disco.
@@ -124,6 +124,7 @@ Também foi testado o download de um ficheiro quando é requerida a autenticaç�
 \iffalse (síntese da informação apresentada nas secções anteriores; reflexão sobre os objectivos de aprendizagem alcançados) \fi
 
 O projeto pode ser sumariamente descrito pelo seu principal propósito que é o desenvolvimento de um protocolo de ligação de dados e o seu teste aquando da obtenção de sucesso na transferência de ficheiros entre dois computadores, com mecanismos de recuperação face a algumas situações de erros. 
+
 
 Findo o projeto, consideramos que atingimos os objetivos definidos tendo também implementado alguns dos elementos de valorização especificados no guião. Esta abordagem prática permitiu também uma melhor consciência do funcionamento e dos problemas inerentes às redes comunicações entre computadores, abordados nas aulas teóricas.
 

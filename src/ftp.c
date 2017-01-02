@@ -61,7 +61,7 @@ int login_ftp(ftp* ftp, const char* user, const char* password)
 
 	if (read_ftp(ftp, sd, sizeof(sd))) {
 		fprintf(stderr,
-				"Error: Access denied reading username response.\nftpRead failure.\n");
+				"Error: Access denied reading username response.\nread_ftp failure.\n");
 		return 1;
 	}
 
@@ -134,7 +134,7 @@ int passive_ftp(ftp* ftp)
 	// format IP address
 	if ((sprintf(pasv, "%d.%d.%d.%d", ipPart1, ipPart2, ipPart3, ipPart4))
 			< 0) {
-		fprintf(stderr, "Error: Cannot form ip address.\n");
+		fprintf(stderr, "Error: Cannot form IP address.\n");
 		return 1;
 	}
 
@@ -164,7 +164,7 @@ int retr_ftp(ftp* ftp, const char* filename)
 	}
 
 	if (read_ftp(ftp, retr, sizeof(retr))) {
-		fprintf(stderr, "Error: None information received.\n");
+		fprintf(stderr, "Error: No information received.\n");
 		return 1;
 	}
 
@@ -227,7 +227,7 @@ int send_ftp(ftp* ftp, const char* str, size_t size)
 	int bytes;
 
 	if ((bytes = write(ftp->control_socket_fd, str, size)) <= 0) {
-		fprintf(stderr, "Warning: Nothing was send.\n");
+		fprintf(stderr, "Warning: Nothing was sent.\n");
 		return 1;
 	}
 

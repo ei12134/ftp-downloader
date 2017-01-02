@@ -29,8 +29,8 @@ typedef struct URL {
 } url;
 
 void init_url(url* url);
-int parse_url(url* url, const char* str); // Parse a string with the url to create the URL structure
-int get_host_ip(url* url); // gets an IP by host name
+int parse_url(url* url, const char* str); // Parse a string with the URL to create the URL structure
+int get_host_ip(url* url); // gets the IP address for a given host name
 char* process_until_char(char* str, char chr);
 
 #endif // _URL_H_
