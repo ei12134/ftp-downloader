@@ -19,18 +19,22 @@ typedef char url_content[256];
 #define h_addr h_addr_list[0] /* for backward compatibility */
 
 typedef struct URL {
-	url_content user; // string to user
-	url_content password; // string to password
-	url_content host; // string to host
-	url_content ip; // string to IP
-	url_content path; // string to path
-	url_content filename; // string to filename
-	int port; // integer to port
+    url_content user;     // string to user
+    url_content password; // string to password
+    url_content host;     // string to host
+    url_content ip;       // string to IP
+    url_content path;     // string to path
+    url_content filename; // string to filename
+    int port;             // integer to port
 } url;
 
 void init_url(url* url);
-int parse_url(url* url, const char* str); // Parse a string with the URL to create the URL structure
-int get_host_ip(url* url); // gets the IP address for a given host name
-char* process_until_char(char* str, char chr);
+
+/* url string -> url struct */
+int parse_url(url* url, const char* str);
+
+/* gets the IP address for a given host name */
+int get_host_ip(url* url);
+
 
 #endif // _URL_H_

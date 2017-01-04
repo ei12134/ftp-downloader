@@ -1,97 +1,105 @@
 #include "url.h"
 
+static char* process_until_char(char* str, char chr);
+
 void init_url(url* url)
 {
-	memset(url->user, 0, sizeof(url_content));
-	memset(url->password, 0, sizeof(url_content));
-	memset(url->host, 0, sizeof(url_content));
-	memset(url->path, 0, sizeof(url_content));
-	memset(url->filename, 0, sizeof(url_content));
-	url->port = 21;
+    // fill with zero
+    memset(url->user, 0, sizeof(url_content));
+    memset(url->password, 0, sizeof(url_content));
+    memset(url->host, 0, sizeof(url_content));
+    memset(url->path, 0, sizeof(url_content));
+    memset(url->filename, 0, sizeof(url_content));
+    // default port
+    url->port = 21;
 }
 
-const char* user_pw_regex =
-		"ftp://([A-Za-z0-9])+:([A-Za-z0-9])+@([A-Za-z0-9.~-])+/([[A-Za-z0-9/~._-])+";
-const char* anonymous_regex = "ftp://([A-Za-z0-9.~-])+/([[A-Za-z0-9/~._-])+";
+/* ftp://user:pass@ftp.up.pt:/abc */
+const char* USER_PW_REGEX =
+  "ftp://([A-Za-z0-9])+:([A-Za-z0-9])+@([A-Za-z0-9.~-])+/([[A-Za-z0-9/~._-])+";
+/* ftp://ftp.up.pt/abc */
+const char* ANONYMOUS_REGEX =
+  "ftp://([A-Za-z0-9.~-])+/([[A-Za-z0-9/~._-])+";
 
-int parse_url(url* url, const char* urlStr)
+int parse_url(url* url, const char* URLSTR)
 {
-	char* tempURL, *element, *activeExpression;
-	char target = '@';
-	regex_t* regex;
-	size_t nmatch = strlen(urlStr);
-	regmatch_t pmatch[nmatch];
-	int user_password_mode;
+    const char USER_SEPARATOR = '@';
 
-	element = (char*) malloc(strlen(urlStr));
-	tempURL = (char*) malloc(strlen(urlStr));
+    /* copy url string to temporary */
+    char* tempURL = (char*) malloc(strlen(URLSTR));
+    memcpy(tempURL, URLSTR, strlen(URLSTR));
 
-	memcpy(tempURL, urlStr, strlen(urlStr));
+    /* Use password? */
+    int use_password;
+    char* active_regex;
+    if (strchr(tempURL, USER_SEPARATOR) != NULL) { // find separator
+        use_password = 1;
+        active_regex = (char*) USER_PW_REGEX;
+    } else {
+        use_password = 0;
+        active_regex = (char*) ANONYMOUS_REGEX;
+    }
 
-	if (strchr(tempURL, target) != NULL) {
-		user_password_mode = 1;
-		activeExpression = (char*) user_pw_regex;
-	} else {
-		user_password_mode = 0;
-		activeExpression = (char*) anonymous_regex;
-	}
+    /* Check validity of URL against regex */
+    regex_t* regex = (regex_t*) malloc(sizeof(regex_t));
+    int reti = regcomp(regex,active_regex,REG_EXTENDED); // compile regex
+    if (reti) {
+        perror("URL regex error");
+        return 1;
+    }
+    size_t nmatch = strlen(URLSTR);
+    regmatch_t pmatch[nmatch];
+    if ((reti = regexec(regex,tempURL,nmatch,pmatch,REG_EXTENDED)) != 0) {
+        perror("URL regex mismatch");
+        return 1;
+    }
+    free(regex);
 
-	regex = (regex_t*) malloc(sizeof(regex_t));
+    // removing ftp:// from string
+    strcpy(tempURL, tempURL + 6);
 
-	int reti;
-	if ((reti = regcomp(regex, activeExpression, REG_EXTENDED)) != 0) {
-		perror("URL format is wrong.");
-		return 1;
-	}
+    /*
+     * Write to URL struct:
+     */
 
-	if ((reti = regexec(regex, tempURL, nmatch, pmatch, REG_EXTENDED))
-			!= 0) {
-		perror("URL could not execute.");
-		return 1;
-	}
+    char* element = (char*) malloc(strlen(URLSTR));
+    if (use_password) {
+        // saving username
+        strcpy(element, process_until_char(tempURL, ':'));
+        memcpy(url->user,element,strlen(element));
 
-	free(regex);
+        // saving password
+        strcpy(element, process_until_char(tempURL, '@'));
+        memcpy(url->password, element, strlen(element));
+    }
 
-	// removing ftp:// from string
-	strcpy(tempURL, tempURL + 6);
+    // Setting host
+    strcpy(element, process_until_char(tempURL, '/'));
+    memcpy(url->host, element, strlen(element));
 
-	if (user_password_mode) {
-		// saving username
-		strcpy(element, process_until_char(tempURL, ':'));
-		memcpy(url->user, element, strlen(element));
+    // Setting URL path
+    char* path = (char*) malloc(strlen(tempURL));
+    int startPath = 1;
+    while (strchr(tempURL, '/')) {
+        element = process_until_char(tempURL, '/');
 
-		// saving password
-		strcpy(element, process_until_char(tempURL, '@'));
-		memcpy(url->password, element, strlen(element));
-	}
+        if (startPath) {
+            startPath = 0;
+            strcpy(path, element);
+        } else {
+            strcat(path, element);
+        }
 
-	// Setting host
-	strcpy(element, process_until_char(tempURL, '/'));
-	memcpy(url->host, element, strlen(element));
+        strcat(path, "/");
+    }
 
-	// Setting URL path
-	char* path = (char*) malloc(strlen(tempURL));
-	int startPath = 1;
-	while (strchr(tempURL, '/')) {
-		element = process_until_char(tempURL, '/');
+    strcpy(url->path, path);
 
-		if (startPath) {
-			startPath = 0;
-			strcpy(path, element);
-		} else {
-			strcat(path, element);
-		}
+    // Setting filename
+    strcpy(url->filename, tempURL);
 
-		strcat(path, "/");
-	}
-
-	strcpy(url->path, path);
-
-	// Setting filename
-	strcpy(url->filename, tempURL);
-
-	free(tempURL);
-	free(element);
+    free(tempURL);
+    free(element);
 
 //	fprintf(stdout, "\n%s\n%s\n%s\n%s\n%s\n", url->user, url->password,
 //			url->host, url->path, url->filename);
@@ -101,33 +109,37 @@ int parse_url(url* url, const char* urlStr)
 
 int get_host_ip(url* url)
 {
-	struct hostent* h;
+    struct hostent* h;
 
-	if ((h = gethostbyname(url->host)) == NULL) {
-		perror("get_host_ip");
-		return 1;
-	}
+    if ((h = gethostbyname(url->host)) == NULL) {
+        perror("get_host_ip");
+        return 1;
+    }
 
 //	fprintf(stdout, "Host name  : %s\n", h->h_name);
 //	fprintf(stdout, "IP Address : %s\n", inet_ntoa(*((struct in_addr *) h->h_addr)));
 
-	char* ip = inet_ntoa(*((struct in_addr *) h->h_addr));
-	strcpy(url->ip, ip);
-
-	return 0;
+    /* "inet_ntoa()" converts a numeric address (in network byte order) to the
+     * IPv4 numbers-and-dots representation.  */
+    char* ip = inet_ntoa(*((struct in_addr *) h->h_addr));
+    strcpy(url->ip, ip);
+    return 0;
 }
 
-char* process_until_char(char* str, char chr)
+static char* process_until_char(char* str, char chr)
 {
-	// using temporary string to process substrings
-	char* tempStr = (char*) malloc(strlen(str));
+    // using temporary string to process substrings
+    char* tempStr = (char*) malloc(strlen(str));
 
-	// calculating length to copy element
-	int index = strlen(str) - strlen(strcpy(tempStr, strchr(str, chr)));
+    // calculating length to copy element
+    // eg, copy @pass/abc, compute length, subtract from length of string
+    int index = strlen(str) - strlen(strcpy(tempStr, strchr(str, chr)));
 
-	tempStr[index] = '\0'; // termination char in the end of string
-	strncpy(tempStr, str, index);
-	strcpy(str, str + strlen(tempStr) + 1);
+    tempStr[index] = '\0'; // termination char in the end of string
+    strncpy(tempStr, str, index);
 
-	return tempStr;
+    // delete from the beginning of string
+    strcpy(str, str + strlen(tempStr) + 1);
+
+    return tempStr;
 }
