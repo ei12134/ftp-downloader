@@ -52,6 +52,25 @@ int connect_ftp(ftp* ftp, const char* ip, int port)
     return 0;
 }
 
+int ftp_command(ftp* ftp,char* s,const int reply)
+{
+    if (send_ftp(ftp, s, strlen(s))) {
+        fprintf(stderr, "Error: send_ftp failure.\n");
+        return 1;
+    }
+    if (read_ftp(ftp, s, sizeof(s))) {
+        fprintf(stderr, "Error: read_ftp failure.\n");
+        return 1;
+    }
+    char num[4];
+    num[0]=s[0]; num[1]=s[1]; num[2]=s[2]; num[3]='\0';
+    if (atoi(num) != reply) {
+        fprintf(stderr,"Error: Server replied with %s\n",num);
+        return 2;
+    }
+    return 0;
+}
+
 int login_ftp(ftp* ftp, const char* user, const char* password)
 {
     char sd[1024];
@@ -68,7 +87,7 @@ int login_ftp(ftp* ftp, const char* user, const char* password)
         return 1;
     }
     if (sd[0] == '5' || sd[0] == '4') {
-        fprintf(stderr,"Error: Access denied reading username response.\n\");
+        fprintf(stderr,"Error: Access denied reading username response.\n");
         return 1;
     }
 
@@ -87,7 +106,7 @@ int login_ftp(ftp* ftp, const char* user, const char* password)
         return 1;
     }
     if (sd[0] == '5' || sd[0] == '4') {
-        fprintf(stderr,"Error: Access denied reading password response.\n\");
+        fprintf(stderr,"Error: Access denied reading password response.\n");
         return 1;
     }
 
@@ -98,7 +117,7 @@ int cwd_ftp(ftp* ftp, const char* path)
 {
     char cwd[1024];
 
-    sprintf(cwd, "CWD %s\r\n", path);
+    sprintf(cwd, "CWD %s\r\n", strlen(path) == 0 ? "." : path);
     if (send_ftp(ftp, cwd, strlen(cwd))) {
         fprintf(stderr, "Error: Cannot send path to CWD.\n");
         return 1;
@@ -110,7 +129,7 @@ int cwd_ftp(ftp* ftp, const char* path)
         return 1;
     }
     if (cwd[0] == '5' || cwd[0] == '4') {
-        fprintf(stderr,"Error: Access denied reading password response.\n\");
+        fprintf(stderr,"Error: Access denied reading password response.\n");
         return 1;
     }
 
@@ -164,7 +183,7 @@ int passive_ftp(ftp* ftp)
         return 1;
     }
 
-	return 0;
+    return 0;
 }
 
 int retr_ftp(ftp* ftp, const char* filename)
