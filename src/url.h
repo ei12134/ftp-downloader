@@ -34,7 +34,9 @@ void init_url(url* url);
 int parse_url(url* url, const char* str);
 
 /* gets the IP address for a given host name */
-int get_host_ip(url* url);
+int get_host_ipv4(url* url);
+int get_host_ipv4_new(url* url);
+int get_host_ipv6(url* url);
 
 
 #endif // _URL_H_

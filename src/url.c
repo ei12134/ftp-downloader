@@ -2,6 +2,7 @@
 
 static char* process_until_char(char* str, char chr);
 
+
 void init_url(url* url)
 {
     // fill with zero
@@ -14,10 +15,8 @@ void init_url(url* url)
     url->port = 21;
 }
 
-/* ftp://user:pass@ftp.up.pt:/abc */
 const char* USER_PW_REGEX =
-  "ftp://([A-Za-z0-9])+:([A-Za-z0-9])+@([A-Za-z0-9.~-])+/([[A-Za-z0-9/~._-])+";
-/* ftp://ftp.up.pt/abc */
+  "ftp://[A-Za-z0-9]+:([A-Za-z0-9])+@([A-Za-z0-9.~-])+/([[A-Za-z0-9/~._-])+";
 const char* ANONYMOUS_REGEX =
   "ftp://([A-Za-z0-9.~-])+/([[A-Za-z0-9/~._-])+";
 
@@ -33,6 +32,7 @@ int parse_url(url* url, const char* URLSTR)
     int use_password;
     char* active_regex;
     if (strchr(tempURL, USER_SEPARATOR) != NULL) { // find separator
+        printf("URL: Using password\n");
         use_password = 1;
         active_regex = (char*) USER_PW_REGEX;
     } else {
@@ -51,6 +51,7 @@ int parse_url(url* url, const char* URLSTR)
     regmatch_t pmatch[nmatch];
     if ((reti = regexec(regex,tempURL,nmatch,pmatch,REG_EXTENDED)) != 0) {
         perror("URL regex mismatch");
+        fprintf(stderr,"URL: %s\n",tempURL);
         return 1;
     }
     free(regex);
@@ -107,7 +108,46 @@ int parse_url(url* url, const char* URLSTR)
 	return 0;
 }
 
-int get_host_ip(url* url)
+int get_host_ipv4(url* url)
+{
+    struct hostent* h;
+
+    if ((h = gethostbyname(url->host)) == NULL) {
+        perror("get_host_ip");
+        return 1;
+    }
+
+    //printf(stdout, "Host name  : %s\n", h->h_name);
+    //fprintf(stdout, "IP Address : %s\n", inet_ntoa(*((struct in_addr *) h->h_addr)));
+
+    /* "inet_ntoa()" converts a numeric address (in network byte order) to the
+     * IPv4 numbers-and-dots representation.  */
+    char* ip = inet_ntoa(*((struct in_addr *) h->h_addr));
+    strcpy(url->ip, ip);
+    return 0;
+}
+
+int get_host_ipv4_new(url* url) {
+    struct addrinfo hints;
+    memset(&hints,0,sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = 0;
+    hints.ai_flags = AI_PASSIVE;
+
+    struct addrinfo* res;
+    getaddrinfo(url->host,"ftp",&hints,&res);
+
+    struct sockaddr* sockaddr_var = res->ai_addr;
+    struct sockaddr_in* sockaddr_in_var = (struct sockaddr_in*) sockaddr_var;
+    struct in_addr in_addr_var = sockaddr_in_var->sin_addr;
+    char* ip = inet_ntoa(in_addr_var);
+    printf("ip: %s\n",ip);
+    strcpy(url->ip,ip);
+    return 0;
+}
+
+int get_host_ipv6(url* url)
 {
     struct hostent* h;
 
