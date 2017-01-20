@@ -98,13 +98,10 @@ int login_ftp(ftp* ftp, const char* user, const char* password)
     return 0;
 }
 
-int list_ftp(ftp* ftp, const char* path)
+int list_ftp(ftp* ftp, char* path)
 {
-    if (strlen(path) == 0) {
-        fprintf(stderr, "LIST: Empty path.\n");
-        return 0;
-    }
-    if (ftp_command(ftp,"LIST",path,NULL,125,150)) { return 1; }
+    path = strlen(path) == 0 ? path : ".";
+    if (ftp_command(ftp,"LIST",NULL,NULL,125,150)) { return 1; }
     return 0;
 }
 
@@ -195,6 +192,13 @@ int download_ftp(ftp* ftp, const char* filename)
         }
 
     }
+
+    char s[1024];
+    if (read_ftp(ftp, s, sizeof(s))) {
+        fprintf(stderr, "Error: read_ftp failure.\n");
+        return 1;
+    }
+    printf("%s\n",s);
 
     fclose(file);
     close(ftp->data_socket_fd);

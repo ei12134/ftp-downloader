@@ -24,7 +24,7 @@ int login_ftp(ftp* ftp, const char* user, const char* password);
 int cwd_ftp(ftp* ftp, const char* path);
 int passive_ftp(ftp* ftp);
 int retr_ftp(ftp* ftp, const char* filename);
-int list_ftp(ftp* ftp, const char* filename);
+int list_ftp(ftp* ftp, char* filename);
 int download_ftp(ftp* ftp, const char* filename);
 int disconnect_ftp(ftp* ftp);
 int send_ftp(ftp* ftp, const char* str, size_t size);
