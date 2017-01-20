@@ -178,6 +178,11 @@ int download_ftp(ftp* ftp, const char* filename)
     long progress = 0;
     time_t t = time(NULL);
     while ((bytes = read(ftp->data_socket_fd, buf, sizeof(buf)))) {
+        progress += bytes;
+        if (time(NULL)-t > 1) {
+            printf("Downloaded %ld B\n",progress);
+            t = time(NULL);
+	}
         if (bytes < 0) {
             fprintf(stderr,
                     "Error: Nothing was received from data socket fd.\n");
@@ -189,17 +194,12 @@ int download_ftp(ftp* ftp, const char* filename)
             return 2;
         }
 
-        progress += bytes;
-        if (time(NULL)-t > 1) {
-            printf("Downloaded %ld MiB\n",progress/1024);
-            t = time(NULL);
-        }
-	}
+    }
 
-	fclose(file);
-	close(ftp->data_socket_fd);
+    fclose(file);
+    close(ftp->data_socket_fd);
 
-	return 0;
+    return 0;
 }
 
 int disconnect_ftp(ftp* ftp)

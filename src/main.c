@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #define INVALID_PORT -1
-#define USE_IPV6 1
+#define USE_IPV6 0
 
 void print_usage(char* program) {
     fprintf(stdout,
@@ -44,12 +44,12 @@ int get_url_from_args(int argc,char** argv,url* dest_url)
         return -1;
 
     if (USE_IPV6) {
-        if (get_host_ipv4_new(&url)) {
+        if (get_host_ipv6(&url)) {
             printf("Error: Cannot find ip to hostname %s.\n", url.host);
             return -1;
         }
     } else {
-        if (get_host_ipv6(&url)) {
+        if (get_host_ipv4_new(&url)) {
             printf("Error: Cannot find ip to hostname %s.\n", url.host);
             return -1;
         }
