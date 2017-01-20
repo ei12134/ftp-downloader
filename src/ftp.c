@@ -1,6 +1,8 @@
 #include "ftp.h"
 #include <time.h>
 
+#define NO_NUMBER 0
+
 /* Call connect() on ip and port (which are in host byte order.) */
 static int connect_socket(const char* ip, int port)
 {
@@ -56,11 +58,15 @@ int connect_ftp(ftp* ftp, const char* ip, int port)
     return 0;
 }
 
-int ftp_command(ftp* ftp,const char* cmd,const char* args,const int reply,char* rep)
+int ftp_command(ftp* ftp,const char* cmd,const char* args,char* rep,const int reply1,const int reply2)
 {
     char s[1024];
 
-    sprintf(s, "%s %s\r\n", cmd,args);
+    if (args != NULL) {
+        sprintf(s, "%s %s\r\n", cmd,args);
+    } else {
+        sprintf(s, "%s\r\n", cmd);
+    }
     if (send_ftp(ftp, s, strlen(s))) {
         fprintf(stderr, "Error: send_ftp failure.\n");
         return 1;
@@ -75,8 +81,9 @@ int ftp_command(ftp* ftp,const char* cmd,const char* args,const int reply,char* 
 
     char num[4];
     strncpy(num,s,3);
-    if (atoi(num) != reply) {
-        fprintf(stderr,"Error: Server reply: %s\n",num);
+    num[3] = '\0';
+    if (atoi(num) != reply1 && atoi(num) != reply2) {
+        fprintf(stderr,"Error: Reply code %s != %d || %d\n",num,reply1,reply2);
         return 2;
     }
     return 0;
@@ -85,9 +92,19 @@ int ftp_command(ftp* ftp,const char* cmd,const char* args,const int reply,char* 
 int login_ftp(ftp* ftp, const char* user, const char* password)
 {
     // send the user
-    if (ftp_command(ftp,"USER",user,331,NULL)) { return 1; }
+    if (ftp_command(ftp,"USER",user,NULL,331,NO_NUMBER)) { return 1; }
     // send the password
-    if (ftp_command(ftp,"PASS",password,230,NULL)) { return 2; }
+    if (ftp_command(ftp,"PASS",password,NULL,230,NO_NUMBER)) { return 2; }
+    return 0;
+}
+
+int list_ftp(ftp* ftp, const char* path)
+{
+    if (strlen(path) == 0) {
+        fprintf(stderr, "LIST: Empty path.\n");
+        return 0;
+    }
+    if (ftp_command(ftp,"LIST",path,NULL,125,150)) { return 1; }
     return 0;
 }
 
@@ -97,7 +114,7 @@ int cwd_ftp(ftp* ftp, const char* path)
         fprintf(stderr, "CWD: Empty path.\n");
         return 0;
     }
-    if (ftp_command(ftp,"CWD",path,250,NULL)) { return 1; }
+    if (ftp_command(ftp,"CWD",path,NULL,250,NO_NUMBER)) { return 1; }
     return 0;
 }
 
@@ -105,7 +122,7 @@ int passive_ftp(ftp* ftp)
 {
     char reply[256];
 
-    if (ftp_command(ftp,"PASV","",227,reply)) { return 1; }
+    if (ftp_command(ftp,"PASV","",reply,227,NO_NUMBER)) { return 1; }
 
     // starting process information
     int ipPart1, ipPart2, ipPart3, ipPart4;
@@ -145,7 +162,7 @@ int passive_ftp(ftp* ftp)
 
 int retr_ftp(ftp* ftp, const char* filename)
 {
-    return ftp_command(ftp,"RETR",filename,150,NULL);
+    return ftp_command(ftp,"RETR",filename,NULL,125,150);
 }
 
 int download_ftp(ftp* ftp, const char* filename)
@@ -187,23 +204,13 @@ int download_ftp(ftp* ftp, const char* filename)
 
 int disconnect_ftp(ftp* ftp)
 {
-	char disc[1024];
-
-	if (read_ftp(ftp, disc, sizeof(disc))) {
-		fprintf(stderr, "Error: Cannot disconnect account.\n");
-		return 1;
-	}
-
-	sprintf(disc, "QUIT\r\n");
-	if (send_ftp(ftp, disc, strlen(disc))) {
-		fprintf(stderr, "Error: Cannot send QUIT command.\n");
-		return 1;
-	}
-
-	if (ftp->control_socket_fd)
-		close(ftp->control_socket_fd);
-
-	return 0;
+    if (ftp_command(ftp,"QUIT",NULL,NULL,221,226)) {
+        return 1;
+    }
+    if (ftp->control_socket_fd) {
+        return close(ftp->control_socket_fd);
+    }
+    return 0;
 }
 
 int send_ftp(ftp* ftp, const char* msg, size_t size)

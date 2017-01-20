@@ -63,6 +63,14 @@ int get_url_from_args(int argc,char** argv,url* dest_url)
     return 0;
 }
 
+void abort_connection(ftp* ftp,char* msg,int ret)
+{
+    //fprintf(stderr,msg);
+    printf(msg);
+    disconnect_ftp(ftp);
+    exit(ret);
+}
+
 int main(int argc, char** argv)
 {
     url url;
@@ -82,27 +90,31 @@ int main(int argc, char** argv)
 	// Sending credentials to server
 	if (login_ftp(&ftp, user, password)) {
 		printf("Error: Cannot login user %s\n", user);
-		return -1;
+        abort_connection(&ftp,"Exiting\n",-1);
 	}
 
 	// Changing directory
 	if (cwd_ftp(&ftp, url.path)) {
 		printf("Error: Cannot change directory to the folder of %s\n",
 				url.filename);
+        abort_connection(&ftp,"Exiting\n",1);
 		return -1;
 	}
 
 	// Entry in passive mode
 	if (passive_ftp(&ftp)) {
-		printf("Error: Cannot entry in passive mode\n");
-		return -1;
+        abort_connection(&ftp,"Error: Cannot entry in passive mode\n",1);
 	}
 
 	// Begins transmission of a file from the remote host
-    retr_ftp(&ftp, url.filename);
+    if (retr_ftp(&ftp, url.filename)) {
+        abort_connection(&ftp,"Exiting\n",1);
+    }
 
     // Starting file transfer
-    download_ftp(&ftp, url.filename);
+    if (download_ftp(&ftp, url.filename)) {
+        abort_connection(&ftp,"Exiting\n",1);
+    }
 
     // Disconnecting from server
     disconnect_ftp(&ftp);
