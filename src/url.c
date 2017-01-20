@@ -25,8 +25,8 @@ int parse_url(url* url, const char* URLSTR)
     const char USER_SEPARATOR = '@';
 
     /* copy url string to temporary */
-    char* tempURL = (char*) malloc(strlen(URLSTR));
-    memcpy(tempURL, URLSTR, strlen(URLSTR));
+    char* tempURL = (char*) malloc(strlen(URLSTR)+1);
+    memcpy(tempURL, URLSTR, strlen(URLSTR)+1);
 
     /* Use password? */
     int use_password;
@@ -57,29 +57,33 @@ int parse_url(url* url, const char* URLSTR)
     free(regex);
 
     // removing ftp:// from string
-    strcpy(tempURL, tempURL + 6);
+    char* s = malloc(sizeof(char)*(strlen(tempURL)+1));
+    strcpy(s, tempURL + 6);
+    strcpy(tempURL,s);
+    free(s);
 
     /*
      * Write to URL struct:
      */
 
-    char* element = (char*) malloc(strlen(URLSTR));
+    char* element = (char*) malloc(strlen(URLSTR)+1);
     if (use_password) {
         // saving username
         strcpy(element, process_until_char(tempURL, ':'));
-        memcpy(url->user,element,strlen(element));
+        memcpy(url->user,element,strlen(element)+1);
 
         // saving password
         strcpy(element, process_until_char(tempURL, '@'));
-        memcpy(url->password, element, strlen(element));
+        memcpy(url->password, element, strlen(element)+1);
     }
 
     // Setting host
     strcpy(element, process_until_char(tempURL, '/'));
-    memcpy(url->host, element, strlen(element));
+    memcpy(url->host, element, strlen(element)+1);
 
     // Setting URL path
-    char* path = (char*) malloc(strlen(tempURL));
+    char* path = (char*) malloc(strlen(tempURL)+1);
+    path[0] = '\0';
     int startPath = 1;
     while (strchr(tempURL, '/')) {
         element = process_until_char(tempURL, '/');
