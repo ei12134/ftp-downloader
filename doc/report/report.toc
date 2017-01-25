@@ -3,10 +3,8 @@
 \contentsline {section}{\numberline {2}Equipamento: Switch Cisco}{2}{section.2}
 \contentsline {section}{\numberline {3}Equipamento: Router Cisco}{2}{section.3}
 \contentsline {section}{\numberline {4}Experi\IeC {\^e}ncia 1: Configura\IeC {\c c}\IeC {\~a}o de uma rede IP }{2}{section.4}
-\contentsline {subsection}{\numberline {4.1}Configura\IeC {\c c}\IeC {\~a}o de interfaces}{2}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}Pacotes ARP e endere\IeC {\c c}os MAC}{4}{subsection.4.2}
-\contentsline {subsection}{\numberline {4.3}Comandos PING}{5}{subsection.4.3}
-\contentsline {subsection}{\numberline {4.4}Interface loopback}{5}{subsection.4.4}
+\contentsline {subsection}{\numberline {4.1}Pacotes ARP e endere\IeC {\c c}os MAC}{4}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Comandos PING}{5}{subsection.4.2}
 \contentsline {section}{\numberline {5}Experi\IeC {\^e}ncia 2: Duas VLANs num switch }{5}{section.5}
 \contentsline {subsection}{\numberline {5.1}Como configurar uma VLAN?}{5}{subsection.5.1}
 \contentsline {subsection}{\numberline {5.2}Dom\IeC {\'\i }nios de broadcast}{5}{subsection.5.2}

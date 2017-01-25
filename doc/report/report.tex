@@ -117,7 +117,7 @@ pretendido é indicado na próxima imagem.
     \label{fig:network1.png}
 \end{figure}
 
-\subsection{Configuração de interfaces}
+\subsection*{Configuração de interfaces}
 
 Na configuração desta rede, começamos por ligar apenas os computadores TUX1 e
 TUX4 ao switch Cisco Catalyst 3560. Cada um dos computadores tem duas
@@ -164,7 +164,9 @@ Realizamos o mesmo procedimento no TUX4, atribuindo o endereço IP com:
 
 $$ifconfig\ eth0\ 172.16.10.254/24$$
 
-O próximo passo é configurar o router que liga os dois computadores.  Para
+\subsection*{Configuração do switch }
+
+O próximo passo é configurar o switch que liga os dois computadores.  Para
 aceder à sua configuração, ligamos o seu terminal a um adaptador cuja saída é
 uma ligação em série, que depois é ligada à entrada de porta de série do TUX1,
 exposta no ficheiro $/dev/ttyS0$ do mesmo.
@@ -175,9 +177,37 @@ password do switch. Escrevemos, depois, os comandos:
 
 $$copy\ tftp://192.168.109.1/2\ startup-config$$
 $$delete\ flash:vlan.dat$$
-$$reboot$$
+$$reload$$
 
+\subsection*{Rotas}
 
+O comando $reload$ demora algum tempo a terminar. Durante este intervalo,
+podemos verificar as rotas de cada um dos computadores com o programa
+$route$.
+Podemos observar que temos uma única entrada para interface na sua tabela.)
+A coluna de destino (Destination) juntamente com a máscara de rede (Genmask),
+determinam para que endereços a sua linha será aplicada. Neste caso, visto a
+máscara de rede ser $255.255.255.0$ (ou seja, usamos os primeiros três grupos
+de 8 bytes, ou 24 bits, conforme indicámos nos comandos anteriores), esta
+entrada será usada para todos os IPs que começam por $172.16.10$.
+Um valor de Gateway nesta tabela indica que o pc enviará pacotes para o endereço de destino directamente em vez de um intermediário, que é o predendido, visto
+estarem ambos ligados entre si. O switch utilizado redireciona pacotes para as
+entradas apropriadas, verificando os IPs (é um switch activo ao invés de
+passivo), mas não recebe pacotes como se fosse um host normal -- ou seja, a sua
+existência é transparente no processo de routing -- por isso não aparece nesta
+tabela de routing.
+
+\subsection*{VLAN}
+
+No entanto, para ter os TUXs a comunicar entre si, temos de nos assegurar que
+estão na mesma VLAN (a VLAN 1, default) do switch. Podemos inspeccionar isto
+com o comando $show\ vlan\ brief$ no switch em modo normal.
+
+% escrever aqui resultados do switch
+
+Ligámos o TUX1 à entrada 1 do switch, que a designa por $Fa0/1$ (abreviatura de
+Fastethernet 1, visto ser uma entrada de Fastethernet) e o TUX2 à entrada dois.
+Nos resultados do switch, vemos que estão os dois na mesma rede.
 
 \subsection{Pacotes ARP e endereços MAC}
 
@@ -205,9 +235,14 @@ do emissor.
 
 Este protocolo é definido no RFC 826.
 
+Para podermos observar pacotes ARP, apagaremos a tabela de ARP dos dois
+computadores com o comando $arp\ -d$.
+
 \subsection{Comandos PING}
 
-\subsection{Interface loopback}
+% escrever aqui teoria sobre IMCP
+
+
 
 \section{Experiência 2: Duas VLANs num switch }
 
