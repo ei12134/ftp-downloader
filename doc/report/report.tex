@@ -117,6 +117,68 @@ pretendido é indicado na próxima imagem.
     \label{fig:network1.png}
 \end{figure}
 
+\subsection{Configuração de interfaces}
+
+Na configuração desta rede, começamos por ligar apenas os computadores TUX1 e
+TUX4 ao switch Cisco Catalyst 3560. Cada um dos computadores tem duas
+interfaces expostas, para além da loopback.
+A interface loopback é uma interface apresentada pelo sistema operativo como
+qualquer outra interface, mas possuíndo o endereço especial $127.0.0.1$
+(IPv4) e $::1$ (IPv6). Pacotes dirigidos a este endereço são direccionados para o
+próprio computador.
+Cada interface pode ser configurada independentemente das outras, e o software
+de rede do sistema operativo encarregar-se-á de encaminhar o tráfego de rede
+para uma ou outra consoante a rede a que pertence e o destino do tráfego. Por esta razão, e uma vez que a configuração será manual, atribuiremos um endereço IP
+juntamente com uma máscara de rede à interface eth0 destes TUXs.
+
+O primeiro passo é desactivar a interface eth1 com o comando
+
+$$ifconfig\ eth1\ down$$
+
+Numa nota à parte, este relatório foi completado depois de uma
+reconfiguração dos computadores por parte dos responsáveis pela manutenção do
+laboratório, pelo que, no caso de alguns TUXs, o programa usado para configurar
+as interfaces foi o $ip$ e não o $ifconfig$, para o qual os comandos são
+diferentes. Para desactivar esta interface com o $ip$ usámos o comando
+
+$$ip\ link\ set\ eth1\ down$$
+
+Seguidamente, removemos os IPs atribuídos ao TUX1 com:
+
+$$ip\ addr\ flush\ dev\ eth0$$
+
+após o que atribuímos o endereço pretendido:
+
+$$ip\ addr\ add\ 172.16.10.1/24\ dev\ eth0$$
+
+e confirmamos o resultado com:
+
+$$ip\ addr\ show\ [dev\ eth0]$$
+
+% inserir aqui resultados do comando
+Nos resultados podemos ver a interface loopback já mencionada, o IP que
+configurámos na interface eth0, e que a MTU desta interface é 1500 bytes, que é
+o tamanho máximo de uma frame em ethernet, que é o tipo de rede (camada de
+rede) que estamos a utilizar.
+Realizamos o mesmo procedimento no TUX4, atribuindo o endereço IP com:
+
+$$ifconfig\ eth0\ 172.16.10.254/24$$
+
+O próximo passo é configurar o router que liga os dois computadores.  Para
+aceder à sua configuração, ligamos o seu terminal a um adaptador cuja saída é
+uma ligação em série, que depois é ligada à entrada de porta de série do TUX1,
+exposta no ficheiro $/dev/ttyS0$ do mesmo.
+Para termos a certeza que não existem configurações já definidas a interferir no nosso trabalho, fazemos reset do switch. Utilizando o programa $gtkterm$ para
+comunicar com a sua linha de comandos, começamos por entrar em modo de
+configuração com o comando $enable$, para o qual precisamos de introduzir a
+password do switch. Escrevemos, depois, os comandos:
+
+$$copy\ tftp://192.168.109.1/2\ startup-config$$
+$$delete\ flash:vlan.dat$$
+$$reboot$$
+
+
+
 \subsection{Pacotes ARP e endereços MAC}
 
 Em qualquer rede deste tipo, o protocolo \emph{ARP} (Address Resolution Protocol)
@@ -146,11 +208,6 @@ Este protocolo é definido no RFC 826.
 \subsection{Comandos PING}
 
 \subsection{Interface loopback}
-
-A interface loopback é uma interface apresentada pelo sistema operativo como
-qualquer outra interface, mas possuíndo o endereço especial $127.0.0.1$
-(IPv4) e $::1$ (IPv6). Pacotes dirigidos a este endereço são direccionados para o
-próprio computador.
 
 \section{Experiência 2: Duas VLANs num switch }
 

@@ -3,27 +3,28 @@
 \contentsline {section}{\numberline {2}Equipamento: Switch Cisco}{2}{section.2}
 \contentsline {section}{\numberline {3}Equipamento: Router Cisco}{2}{section.3}
 \contentsline {section}{\numberline {4}Experi\IeC {\^e}ncia 1: Configura\IeC {\c c}\IeC {\~a}o de uma rede IP }{2}{section.4}
-\contentsline {subsection}{\numberline {4.1}Pacotes ARP e endere\IeC {\c c}os MAC}{2}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}Comandos PING}{3}{subsection.4.2}
-\contentsline {subsection}{\numberline {4.3}Interface loopback}{3}{subsection.4.3}
-\contentsline {section}{\numberline {5}Experi\IeC {\^e}ncia 2: Duas VLANs num switch }{4}{section.5}
-\contentsline {subsection}{\numberline {5.1}Como configurar uma VLAN?}{4}{subsection.5.1}
-\contentsline {subsection}{\numberline {5.2}Dom\IeC {\'\i }nios de broadcast}{4}{subsection.5.2}
-\contentsline {section}{\numberline {6}Experi\IeC {\^e}ncia 3: Configurar um router em Linux }{4}{section.6}
-\contentsline {subsection}{\numberline {6.1}Rotas em cada um dos computadores}{4}{subsection.6.1}
-\contentsline {subsection}{\numberline {6.2}Entradas nas tabelas de forwarding}{4}{subsection.6.2}
-\contentsline {subsection}{\numberline {6.3}Mensagens ARP observadas}{4}{subsection.6.3}
-\contentsline {subsection}{\numberline {6.4}Endere\IeC {\c c}os IP e MAC dos pacotes ICMP}{4}{subsection.6.4}
-\contentsline {section}{\numberline {7}Experi\IeC {\^e}ncia 4: Configurar um router em Linux }{4}{section.7}
-\contentsline {subsection}{\numberline {7.1}Como configurar uma rota est\IeC {\'a}tica num router comercial?}{4}{subsection.7.1}
-\contentsline {subsection}{\numberline {7.2}Caminhos percorridos pelos pacotes}{4}{subsection.7.2}
-\contentsline {subsection}{\numberline {7.3}NAT}{4}{subsection.7.3}
-\contentsline {subsection}{\numberline {7.4}Como configurar NAT num router comercial?}{4}{subsection.7.4}
-\contentsline {section}{\numberline {8}Experi\IeC {\^e}ncia 5: DNS }{4}{section.8}
-\contentsline {subsection}{\numberline {8.1}Como configurar um servi\IeC {\c c}o DNS?}{4}{subsection.8.1}
-\contentsline {subsection}{\numberline {8.2}Pacotes usados por DNS}{4}{subsection.8.2}
-\contentsline {section}{\numberline {9}Experi\IeC {\^e}ncia 7: Aplica\IeC {\c c}\IeC {\~a}o de download}{4}{section.9}
-\contentsline {section}{\numberline {10}Experi\IeC {\^e}ncia 7: Implementa\IeC {\c c}\IeC {\~a}o de NAT em Linux }{7}{section.10}
-\contentsline {section}{\numberline {11}Conclus\IeC {\~o}es}{7}{section.11}
-\contentsline {section}{\numberline {A}C\IeC {\'o}digo fonte}{8}{appendix.A}
-\contentsline {subsection}{\numberline {A.1}Camada de aplica\IeC {\c c}\IeC {\~a}o}{8}{subsection.A.1}
+\contentsline {subsection}{\numberline {4.1}Configura\IeC {\c c}\IeC {\~a}o de interfaces}{2}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Pacotes ARP e endere\IeC {\c c}os MAC}{4}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Comandos PING}{5}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.4}Interface loopback}{5}{subsection.4.4}
+\contentsline {section}{\numberline {5}Experi\IeC {\^e}ncia 2: Duas VLANs num switch }{5}{section.5}
+\contentsline {subsection}{\numberline {5.1}Como configurar uma VLAN?}{5}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Dom\IeC {\'\i }nios de broadcast}{5}{subsection.5.2}
+\contentsline {section}{\numberline {6}Experi\IeC {\^e}ncia 3: Configurar um router em Linux }{5}{section.6}
+\contentsline {subsection}{\numberline {6.1}Rotas em cada um dos computadores}{5}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}Entradas nas tabelas de forwarding}{5}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}Mensagens ARP observadas}{5}{subsection.6.3}
+\contentsline {subsection}{\numberline {6.4}Endere\IeC {\c c}os IP e MAC dos pacotes ICMP}{5}{subsection.6.4}
+\contentsline {section}{\numberline {7}Experi\IeC {\^e}ncia 4: Configurar um router em Linux }{5}{section.7}
+\contentsline {subsection}{\numberline {7.1}Como configurar uma rota est\IeC {\'a}tica num router comercial?}{5}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}Caminhos percorridos pelos pacotes}{5}{subsection.7.2}
+\contentsline {subsection}{\numberline {7.3}NAT}{5}{subsection.7.3}
+\contentsline {subsection}{\numberline {7.4}Como configurar NAT num router comercial?}{5}{subsection.7.4}
+\contentsline {section}{\numberline {8}Experi\IeC {\^e}ncia 5: DNS }{5}{section.8}
+\contentsline {subsection}{\numberline {8.1}Como configurar um servi\IeC {\c c}o DNS?}{5}{subsection.8.1}
+\contentsline {subsection}{\numberline {8.2}Pacotes usados por DNS}{5}{subsection.8.2}
+\contentsline {section}{\numberline {9}Experi\IeC {\^e}ncia 7: Aplica\IeC {\c c}\IeC {\~a}o de download}{5}{section.9}
+\contentsline {section}{\numberline {10}Experi\IeC {\^e}ncia 7: Implementa\IeC {\c c}\IeC {\~a}o de NAT em Linux }{8}{section.10}
+\contentsline {section}{\numberline {11}Conclus\IeC {\~o}es}{8}{section.11}
+\contentsline {section}{\numberline {A}C\IeC {\'o}digo fonte}{9}{appendix.A}
+\contentsline {subsection}{\numberline {A.1}Camada de aplica\IeC {\c c}\IeC {\~a}o}{9}{subsection.A.1}
