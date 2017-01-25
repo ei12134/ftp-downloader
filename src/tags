@@ -1,0 +1,41 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ANONYMOUS_REGEX	url.c	/^const char* ANONYMOUS_REGEX =$/;"	v
+FTP	ftp.h	/^typedef struct FTP {$/;"	s
+URL	url.h	/^typedef struct URL {$/;"	s
+USER_PW_REGEX	url.c	/^const char* USER_PW_REGEX =$/;"	v
+_FTP_H_	ftp.h	2;"	d
+_URL_H_	url.h	2;"	d
+connect_ftp	ftp.c	/^int connect_ftp(ftp* ftp, const char* ip, int port)$/;"	f
+connect_socket	ftp.c	/^static int connect_socket(const char* ip, int port)$/;"	f	file:
+control_socket_fd	ftp.h	/^    int control_socket_fd;  \/\/ file descriptor to control socket$/;"	m	struct:FTP
+cwd_ftp	ftp.c	/^int cwd_ftp(ftp* ftp, const char* path)$/;"	f
+data_socket_fd	ftp.h	/^    int data_socket_fd;     \/\/ file descriptor to data socket$/;"	m	struct:FTP
+disconnect_ftp	ftp.c	/^int disconnect_ftp(ftp* ftp)$/;"	f
+download_ftp	ftp.c	/^int download_ftp(ftp* ftp, const char* filename)$/;"	f
+filename	url.h	/^    url_content filename; \/\/ string to filename$/;"	m	struct:URL
+ftp	ftp.h	/^} ftp;$/;"	t	typeref:struct:FTP
+ftp_command	ftp.c	/^int ftp_command(ftp* ftp,char* s,const int reply)$/;"	f
+get_host_ip	url.c	/^int get_host_ip(url* url)$/;"	f
+h_addr	url.h	19;"	d
+host	url.h	/^    url_content host;     \/\/ string to host$/;"	m	struct:URL
+init_url	url.c	/^void init_url(url* url)$/;"	f
+ip	url.h	/^    url_content ip;       \/\/ string to IP$/;"	m	struct:URL
+login_ftp	ftp.c	/^int login_ftp(ftp* ftp, const char* user, const char* password)$/;"	f
+main	main.c	/^int main(int argc, char** argv)$/;"	f
+parse_url	url.c	/^int parse_url(url* url, const char* URLSTR)$/;"	f
+passive_ftp	ftp.c	/^int passive_ftp(ftp* ftp)$/;"	f
+password	url.h	/^    url_content password; \/\/ string to password$/;"	m	struct:URL
+path	url.h	/^    url_content path;     \/\/ string to path$/;"	m	struct:URL
+port	url.h	/^    int port;             \/\/ integer to port$/;"	m	struct:URL
+process_until_char	url.c	/^static char* process_until_char(char* str, char chr)$/;"	f	file:
+read_ftp	ftp.c	/^int read_ftp(ftp* ftp, char* str, size_t size)$/;"	f
+retr_ftp	ftp.c	/^int retr_ftp(ftp* ftp, const char* filename)$/;"	f
+send_ftp	ftp.c	/^int send_ftp(ftp* ftp, const char* str, size_t size)$/;"	f
+url	url.h	/^} url;$/;"	t	typeref:struct:URL
+url_content	url.h	/^typedef char url_content[256];$/;"	t
+user	url.h	/^    url_content user;     \/\/ string to user$/;"	m	struct:URL

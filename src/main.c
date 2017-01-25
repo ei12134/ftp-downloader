@@ -7,20 +7,26 @@
 #define INVALID_PORT -1
 #define USE_IPV6 0
 
-void print_usage(char* program) {
+void print_usage(char* program)
+{
     fprintf(stdout,
             "Usage: %s ftp://[<user>:<password>@]<host>/<url-path> \
             [-p PORT]\n",
             program);
 }
 
-int get_url_from_args(int argc,char** argv,url* dest_url)
+int get_url_from_args(int argc, char** argv, url* dest_url)
 {
     int port_option = INVALID_PORT;
     char* url_option = NULL;
+    if (argc == 1) {
+        print_usage(argv[0]);
+        return 1;
+    }
+
     for (int i = 1; i < argc; ++i) {
-        if (strcasecmp(argv[i],"-p") == 0) {
-            if (argc != 4 || i==argc-1) {
+        if (strcasecmp(argv[i], "-p") == 0) {
+            if (argc != 4 || i == argc - 1) {
                 print_usage(argv[0]);
                 return 1;
             }
@@ -63,7 +69,7 @@ int get_url_from_args(int argc,char** argv,url* dest_url)
     return 0;
 }
 
-void abort_connection(ftp* ftp,char* msg,int ret)
+void abort_connection(ftp* ftp, char* msg, int ret)
 {
     //fprintf(stderr,msg);
     printf(msg);
@@ -74,9 +80,11 @@ void abort_connection(ftp* ftp,char* msg,int ret)
 int main(int argc, char** argv)
 {
     url url;
-    int get_url_ret = get_url_from_args(argc,argv,&url);
-    if (get_url_ret != 0) { return get_url_ret; }
-    printf("The IP received to %s was %s:%d\n", url.host,url.ip,url.port);
+    int get_url_ret = get_url_from_args(argc, argv, &url);
+    if (get_url_ret != 0) {
+        return get_url_ret;
+    }
+    printf("The IP received to %s was %s:%d\n", url.host, url.ip, url.port);
 
     // File transfer protocol client
     ftp ftp;
@@ -87,33 +95,33 @@ int main(int argc, char** argv)
     const char* user = strlen(url.user) ? url.user : "anonymous";
     const char* password = strlen(url.password) ? url.password : "";
 
-	// Sending credentials to server
-	if (login_ftp(&ftp, user, password)) {
-		printf("Error: Cannot login user %s\n", user);
-        abort_connection(&ftp,"Exiting\n",-1);
-	}
+    // Sending credentials to server
+    if (login_ftp(&ftp, user, password)) {
+        printf("Error: Cannot login user %s\n", user);
+        abort_connection(&ftp, "Exiting\n", -1);
+    }
 
-	// Changing directory
-	if (cwd_ftp(&ftp, url.path)) {
-		printf("Error: Cannot change directory to the folder of %s\n",
-				url.filename);
-        abort_connection(&ftp,"Exiting\n",1);
-		return -1;
-	}
+    // Changing directory
+    if (cwd_ftp(&ftp, url.path)) {
+        printf("Error: Cannot change directory to the folder of %s\n",
+               url.filename);
+        abort_connection(&ftp, "Exiting\n", 1);
+        return -1;
+    }
 
-	// Entry in passive mode
-	if (passive_ftp(&ftp)) {
-        abort_connection(&ftp,"Error: Cannot entry in passive mode\n",1);
-	}
+    // Entry in passive mode
+    if (passive_ftp(&ftp)) {
+        abort_connection(&ftp, "Error: Cannot entry in passive mode\n", 1);
+    }
 
-	// Begins transmission of a file from the remote host
+    // Begins transmission of a file from the remote host
     if (retr_ftp(&ftp, url.filename)) {
-        abort_connection(&ftp,"Exiting\n",1);
+        abort_connection(&ftp, "Exiting\n", 1);
     }
 
     // Starting file transfer
     if (download_ftp(&ftp, url.filename)) {
-        abort_connection(&ftp,"Exiting\n",1);
+        abort_connection(&ftp, "Exiting\n", 1);
     }
 
     //list_ftp(&ftp,".");
