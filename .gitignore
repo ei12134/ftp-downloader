@@ -1,0 +1,10 @@
+tags
+*.swp
+*.swo
+*.swq
+*.out
+/*.zip
+bin/
+*.log
+*.pdf
+*.aux

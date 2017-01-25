@@ -58,23 +58,150 @@ Computação\\[1cm]}\normalsize Turma 4}
 \newpage
 
 \abstract
-\iffalse dois parágrafos: um sobre o contexto do trabalho; outro sobre as principais conclusões do relatório \fi
+\iffalse dois parágrafos: um sobre o contexto do trabalho; outro sobre as
+principais conclusões do relatório \fi
 
-No âmbito da unidade curricular de Redes de Computadores, foi-nos proposto o desenvolvimento de uma aplicação que testasse um protocolo de ligação de dados criado de raiz, transferindo um ficheiro recorrendo à porta de série $RS-232$. O trabalho permitiu praticar conceitos teóricos no desenho de um protocolo de ligação de dados como o sincronismo e delimitação de tramas, controlo de erros, controlo de fluxo recurso a mecanismos de transparência de dados na transmissão assíncrona.
+No âmbito da unidade curricular de Redes de Computadores, foi-nos proposto o
+desenvolvimento de uma aplicação que testasse um protocolo de ligação de dados
+criado de raiz, transferindo um ficheiro recorrendo à porta de série $RS-232$.
+O trabalho permitiu praticar conceitos teóricos no desenho de um protocolo de
+ligação de dados como o sincronismo e delimitação de tramas, controlo de erros,
+controlo de fluxo recurso a mecanismos de transparência de dados na transmissão
+assíncrona.
 
-Findo o projeto, notou-se a importância dos mecanismos que asseguram tolerância a falhas fornecidos pela camada de ligação de dados, uma vez que a camada física não é realmente fiável.
+Findo o projeto, notou-se a importância dos mecanismos que asseguram tolerância
+a falhas fornecidos pela camada de ligação de dados, uma vez que a camada
+física não é realmente fiável.
 
 \section{Introdução}
-\iffalse(indicação dos objectivos do trabalho e do relatório; descrição da lógica do relatório com indicações sobre o tipo de informação que poderá ser encontrada em cada uma secções seguintes) \fi
-O objetivo do trabalho realizado nas aulas laboratoriais da disciplina de Redes de Computadores é a implementação de um protocolo de ligação de dados que permita praticar conhecimentos acerca de transmissões de dados entre computadores, programando em baixo nível as características comuns a este tipos de protocolos como a transparência na transmissão de dados de forma assíncrona e organização da informação sob a forma de tramas.
+\iffalse(indicação dos objectivos do trabalho e do relatório; descrição da
+lógica do relatório com indicações sobre o tipo de informação que poderá ser
+encontrada em cada uma secções seguintes) \fi
+O objetivo do trabalho realizado nas aulas laboratoriais da disciplina de Redes
+de Computadores é a implementação de um protocolo de ligação de dados que
+permita praticar conhecimentos acerca de transmissões de dados entre
+computadores, programando em baixo nível as características comuns a este tipos
+de protocolos como a transparência na transmissão de dados de forma assíncrona
+e organização da informação sob a forma de tramas.
 
-\section{Aplicação de download}
-A primeira parte do segundo trabalho laboratorial consistiu no desenvolvimento de uma aplicação de download recorrendo ao protocolo de transferência de ficheiros FTP especificado pelo \texttt{RFC959}. Para este efeito foi também necessário resolver o endereço de IP para um dado URL de acordo com especificação RFC1738. Separaram-se as componentes do parsing do URL e do cliente de download usando o protocolo FTP respectivamente nos ficheiros \texttt{url.c} e \texttt{ftp.c}.
+\section{Equipamento: Switch Cisco}
+
+\section{Equipamento: Router Cisco}
+
+\section{Experiência 1: Configuração de uma rede IP }
+
+Nesta experiência, configuraremos apenas uma rede simples de dois computadores
+ligados entre si por um switch. Esta rede usará o conjunto de protocolos que
+constituem, em parte, a arquitectura da mais conhecida rede de todas, a
+Internet. Como é sabido, o protocolo que gere a camada de rede da Internet é
+o IP (Internet Protocol).  Para além do próprio protocolo IP, a Internet usa
+vários outros protocolos auxiliares para regular o seu funcionamento,
+nomeadamente ARP, ICMP, e DHCP.
+O protocolo DHCP é usado para negociar automaticamente a atribuição de um
+endereço IP a qualquer elemento de uma rede que permita uma identificação única
+perante outros membros. Este protocolo não será usado, e em vez disso
+atribuir-se-á manualmente e estaticamente endereços IP a cada um dos
+computadores das redes desta e subsequente experiências deste trabalho, o que é
+exequível visto tratarem-se de redes de pequena dimensão, o que não seria o
+caso noutras instalações de aplicação prática no mundo real.
+
+Os endereços desta experiência serão divididos, como é feito neste protocolo de
+rede, numa parte respeitante à subrede (subnet), e outra que indicará o
+endereço de cada computador dentro desta rede. Um pequeno esquema do resultado
+pretendido é indicado na próxima imagem.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[scale=0.45]{res/network1.png}
+    \caption{Rede da 1a Experiência}
+    \label{fig:network1.png}
+\end{figure}
+
+\subsection{Pacotes ARP e endereços MAC}
+
+Em qualquer rede deste tipo, o protocolo \emph{ARP} (Address Resolution Protocol)
+desempenhará a função necessária de comunicar a atribuição de endereços IP
+entre vizinhos -- NICs (Network Interface Cards), como placas Ethernet, não
+compreendem endereços IP, emitindo apenas tramas endereçadas pelo ao que se
+chamam endereços MAC (Media Access Control), atribuídos pela IEEE e
+garantidamente únicos em qualquer parte do mundo. Quando um computador numa
+rede deste tipo deseja saber a que endereço MAC corresponde um determinado
+endereço IP, emite (através de broadcast) um pacote ARP com a pergunta "a quem
+pertence este endereço IP?". De seguida, o dono do endereço referido responde à
+questão com outro pacote. O emissor do primeiro pedido de ARP também inclui o
+seu próprio endereço IP na mensagem, eliminando a necessidade do segundo membro
+da rede perguntar ele próprio para que endereço de IP deve responder.
+De notar que os pacotes utilizados nesta troca são pacotes IP, e não
+simplesmente tramas de Ethernet.
+
+Cada membro da rede mantém em cache uma tabela de atribuições de endereços IP,
+mas esta deve ter uma duração finita, para lidar com reconfigurações na rede e
+na sua topologia. Quando um computador é configurado inicialmente, pode emitir
+um pedido ARP pelo seu próprio endereço. Não deverá ocorrer nenhuma resposta,
+mas todos os seus vizinhos deverão receber a informação relativa ao endereço IP
+do emissor.
+
+Este protocolo é definido no RFC 826.
+
+\subsection{Comandos PING}
+
+\subsection{Interface loopback}
+
+A interface loopback é uma interface apresentada pelo sistema operativo como
+qualquer outra interface, mas possuíndo o endereço especial $127.0.0.1$
+(IPv4) e $::1$ (IPv6). Pacotes dirigidos a este endereço são direccionados para o
+próprio computador.
+
+\section{Experiência 2: Duas VLANs num switch }
+
+\subsection{Como configurar uma VLAN?}
+
+\subsection{Domínios de broadcast}
+
+\section{Experiência 3: Configurar um router em Linux }
+
+\subsection{Rotas em cada um dos computadores}
+
+\subsection{Entradas nas tabelas de forwarding}
+
+\subsection{Mensagens ARP observadas}
+
+\subsection{Endereços IP e MAC dos pacotes ICMP}
+
+\section{Experiência 4: Configurar um router em Linux }
+
+\subsection{Como configurar uma rota estática num router comercial?}
+
+\subsection{Caminhos percorridos pelos pacotes}
+
+\subsection{NAT}
+
+\subsection{Como configurar NAT num router comercial?}
+
+\section{Experiência 5: DNS }
+
+\subsection{Como configurar um serviço DNS?}
+
+\subsection{Pacotes usados por DNS}
+
+\section{Experiência 7: Aplicação de download}
+A primeira parte do segundo trabalho laboratorial consistiu no desenvolvimento
+de uma aplicação de download recorrendo ao protocolo de transferência de
+ficheiros FTP especificado pelo \texttt{RFC959}. Para este efeito foi também
+necessário resolver o endereço de IP para um dado URL de acordo com
+especificação RFC1738. Separaram-se as componentes do parsing do URL e do
+cliente de download usando o protocolo FTP respectivamente nos ficheiros
+\texttt{url.c} e \texttt{ftp.c}.
 
 \subsection*{Casos de uso principais}
 \iffalse (identificação; sequências de chamada de funções) \fi
-O programa implementa uma versão básica de um cliente de FTP com suporte para download de ficheiros de forma anónima ou para um dado par utilizador e password, introduzidos antecipadamente ao caminho de URL do ficheiro. 
-Apesar da introdução do nome de utilizador seguido de password serem facultativos, em alguns casos tornam-se obrigatórios na transferência com sucesso de um ficheiro por FTP caso este não esteja disponível de forma pública e requeira autenticação por parte do utilizador.
+O programa implementa uma versão básica de um cliente de FTP com suporte para
+download de ficheiros de forma anónima ou para um dado par utilizador e
+password, introduzidos antecipadamente ao caminho de URL do ficheiro.  Apesar
+da introdução do nome de utilizador seguido de password serem facultativos, em
+alguns casos tornam-se obrigatórios na transferência com sucesso de um ficheiro
+por FTP caso este não esteja disponível de forma pública e requeira
+autenticação por parte do utilizador.
 
 \begin{figure}[H]
     \center
@@ -84,12 +211,28 @@ Apesar da introdução do nome de utilizador seguido de password serem facultati
 \end{figure}
 
 \subsection*{Análise de URL}
-Após a leitura e compreensão do \texttt{RFC1738}, desenhou-se uma estrutura de dados com a finalidade de armazenar a informação extraída da análise de um link URL recebido pela linha de comandos. Quando fornecidos, são guardados na estrutura referida, o nome de utilizador, a password, o host, ip, path e nome do ficheiro em arrays de caracteres independentes. Para além disso, é também definida a porta 21 como a predefinida na ligação de controlo do protocolo de FTP. À semelhança do que é referido no \texttt{RFC1738}, caracteres capitalizados são interpretados como caracteres minúsculos, admitindo ftp da mesma forma que FTP.
+Após a leitura e compreensão do \texttt{RFC1738}, desenhou-se uma estrutura de
+dados com a finalidade de armazenar a informação extraída da análise de um link
+URL recebido pela linha de comandos. Quando fornecidos, são guardados na
+estrutura referida, o nome de utilizador, a password, o host, ip, path e nome
+do ficheiro em arrays de caracteres independentes. Para além disso, é também
+definida a porta 21 como a predefinida na ligação de controlo do protocolo de
+FTP. À semelhança do que é referido no \texttt{RFC1738}, caracteres
+capitalizados são interpretados como caracteres minúsculos, admitindo ftp da
+mesma forma que FTP.
 
-Para se poder resolver o endereço de IP armazenado na estrutura de URL, é feita uma chamada à função \texttt{gethostbyname} que permite a obtenção do endereço de uma máquina a partir do nome e retorna uma estrutura do tipo \texttt{hostent} contendo o endereço na variável \texttt{h\_addr} que é posteriormente convertido para um array de chars com o auxílio da função \texttt{inet\_ntoa}.
+Para se poder resolver o endereço de IP armazenado na estrutura de URL, é feita
+uma chamada à função \texttt{gethostbyname} que permite a obtenção do endereço
+de uma máquina a partir do nome e retorna uma estrutura do tipo
+\texttt{hostent} contendo o endereço na variável \texttt{h\_addr} que é
+posteriormente convertido para um array de chars com o auxílio da função
+\texttt{inet\_ntoa}.
 
 \subsection*{Cliente de FTP}
-O cliente de FTP liga-se através de um socket TCP ao servidor de FTP identificado pelo endereço de IP acima mencionado e à porta 21 e estabelece uma ligação de controlo de comunicação, comunicando com uma sequência de comandos de transferência FTP que lhe são enviados ao estilo do protocolo Telnet: 
+O cliente de FTP liga-se através de um socket TCP ao servidor de FTP
+identificado pelo endereço de IP acima mencionado e à porta 21 e estabelece uma
+ligação de controlo de comunicação, comunicando com uma sequência de comandos
+de transferência FTP que lhe são enviados ao estilo do protocolo Telnet: 
 
 \begin{labeling}{alligator}
 \item [\textbf{USER user}] envio do nome de utilizador sob a forma de uma string que identifica o utilizador no servidor remoto.
@@ -99,10 +242,12 @@ O cliente de FTP liga-se através de um socket TCP ao servidor de FTP identifica
 \item [\textbf{RETR filename}] comando \texttt{retrieve} que pede ao servidor que inicie a transmissão de uma cópia do ficheiro especificado pelo campo \texttt{filename} usando a nova ligação estabelecida ao endereço e porta recebidos pelo comando anterior.
 \end{labeling}
 
-Uma vez estabelecida a ligação dedicada de transmissão de dados, estes vão sendo recebidos de forma ordenada pelo cliente de FTP e armazenados em disco.
+Uma vez estabelecida a ligação dedicada de transmissão de dados, estes vão
+sendo recebidos de forma ordenada pelo cliente de FTP e armazenados em disco.
 
 \subsection*{Casos de uso}
-Um possível caso de uso pode ser o download de um ficheiro de forma anónima do URL \texttt{ftp://ftp.up.pt/pub/CentOS/filelist.gz}:
+Um possível caso de uso pode ser o download de um ficheiro de forma anónima do
+URL \texttt{ftp://ftp.up.pt/pub/CentOS/filelist.gz}:
 
 \begin{figure}[H]
     \center
@@ -111,7 +256,8 @@ Um possível caso de uso pode ser o download de um ficheiro de forma anónima do
     \label{fig:anonymous.png}
 \end{figure}
 
-Também foi testado o download de um ficheiro quando é requerida a autenticação do utilizador no servidor de FTP:
+Também foi testado o download de um ficheiro quando é requerida a autenticação
+do utilizador no servidor de FTP:
 
 \begin{figure}[H]
     \center
@@ -120,13 +266,37 @@ Também foi testado o download de um ficheiro quando é requerida a autenticaç�
     \label{fig:authenticated.png}
 \end{figure}
 
+\subsection*{Ligações TCP abertas pela aplicação}
+
+\subsection*{Ligação de controlo}
+
+\subsection*{Fases de abertura de uma ligação TCP}
+
+\subsection*{Mecanismo de ARQ em TCP}
+
+\subsection*{Congestionamento na ligação TCP}
+
+\subsection*{Influência de uma segunda ligação TCP}
+
+\section{Experiência 7: Implementação de NAT em Linux }
+
+// TODO
+
 \section{Conclusões}
-\iffalse (síntese da informação apresentada nas secções anteriores; reflexão sobre os objectivos de aprendizagem alcançados) \fi
+\iffalse (síntese da informação apresentada nas secções anteriores; reflexão
+sobre os objectivos de aprendizagem alcançados) \fi
 
-O projeto pode ser sumariamente descrito pelo seu principal propósito que é o desenvolvimento de um protocolo de ligação de dados e o seu teste aquando da obtenção de sucesso na transferência de ficheiros entre dois computadores, com mecanismos de recuperação face a algumas situações de erros. 
+O projeto pode ser sumariamente descrito pelo seu principal propósito que é o
+desenvolvimento de um protocolo de ligação de dados e o seu teste aquando da
+obtenção de sucesso na transferência de ficheiros entre dois computadores, com
+mecanismos de recuperação face a algumas situações de erros. 
 
 
-Findo o projeto, consideramos que atingimos os objetivos definidos tendo também implementado alguns dos elementos de valorização especificados no guião. Esta abordagem prática permitiu também uma melhor consciência do funcionamento e dos problemas inerentes às redes comunicações entre computadores, abordados nas aulas teóricas.
+Findo o projeto, consideramos que atingimos os objetivos definidos tendo também
+implementado alguns dos elementos de valorização especificados no guião. Esta
+abordagem prática permitiu também uma melhor consciência do funcionamento e dos
+problemas inerentes às redes comunicações entre computadores, abordados nas
+aulas teóricas.
 
 \begin{thebibliography}{9}
 \bibitem{lamport93}
@@ -136,6 +306,10 @@ Findo o projeto, consideramos que atingimos os objetivos definidos tendo também
   Prentice Hall, 
   5th edition,
   2011.
+\bibitem{rfc1958}
+  Network Working Group,
+  \emph{Architectural Principles of the Internet},
+  June 1996.
 \end{thebibliography}
 
 \appendix
