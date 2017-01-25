@@ -124,8 +124,6 @@ int main(int argc, char** argv)
         abort_connection(&ftp, "Exiting\n", 1);
     }
 
-    //list_ftp(&ftp,".");
-
     // Disconnecting from server
     disconnect_ftp(&ftp);
 

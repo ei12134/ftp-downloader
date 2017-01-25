@@ -199,16 +199,14 @@ int download_ftp(ftp* ftp, const char* filename)
             return 2;
         }
     }
+    fclose(file);
+    close(ftp->data_socket_fd);
 
     char s[1024];
     if (read_ftp(ftp, s, sizeof(s))) {
         fprintf(stderr, "Error: read_ftp failure.\n");
         return 1;
     }
-    printf("%s\n", s);
-
-    fclose(file);
-    close(ftp->data_socket_fd);
 
     return 0;
 }

@@ -22,8 +22,12 @@ int parse_url(url* url, const char* URLSTR)
     const char USER_SEPARATOR = '@';
 
     /* copy url string to temporary */
-    char* tempURL = (char*)malloc(strlen(URLSTR) + 1);
-    memcpy(tempURL, URLSTR, strlen(URLSTR) + 1);
+    char* tempURL = (char*)malloc(strlen(URLSTR) + 1 + strlen("ftp://"));
+    tempURL[0] = '\0';
+    if (strncmp(URLSTR,"ftp://",strlen("ftp://")) != 0) {
+        strcpy(tempURL,"ftp://");
+    }
+    memcpy(tempURL + strlen(tempURL), URLSTR, strlen(URLSTR) + 1);
 
     /* Use password? */
     int use_password;
@@ -136,9 +140,15 @@ int get_host_ipv4_new(url* url)
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = 0;
     hints.ai_flags = AI_PASSIVE;
+    
+    if (url->host == NULL) {
+        printf("url host is NULL\n");
+    }
 
     struct addrinfo* res;
-    getaddrinfo(url->host, "ftp", &hints, &res);
+    if (getaddrinfo(url->host, "ftp", &hints, &res) != 0) {
+        printf("Error in getaddrinfo; %s\n",url->host);
+    }
 
     struct sockaddr* sockaddr_var = res->ai_addr;
     struct sockaddr_in* sockaddr_in_var = (struct sockaddr_in*)sockaddr_var;
