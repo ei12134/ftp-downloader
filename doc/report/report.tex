@@ -270,11 +270,28 @@ computadores com o comando $arp\ -d$.
 
 \subsection{Como configurar NAT num router comercial?}
 
-\section{Experiência 5: DNS }
+\section{Experiência 5: DNS}
+Nesta experiência pretendia-se configurar o domain name system conhecido pela abreviatura \texttt{DNS}. Este serviço permite que um endereço de domínio seja traduzido num endereço IP válido correspondente. Por exexemplo \texttt{www.google.pt} pode ser traduzido para o endereço de IP \texttt{195.8.12.84}.
 
 \subsection{Como configurar um serviço DNS?}
+Para configurar o serviço de DNS adicionou-se uma linha contendo o endereço de um servidor de DNS ao ficheiro de configuração das rotinas de resolução de endereços da internet da biblioteca de C localizado em \texttt{/etc/resolv.conf}.
+
+$$nameserver\ 172.16.1.1$$
+
+A palavra-chave \texttt{nameserver} é seguida do valor que neste caso é um endereço de IPv4 para um servidor de DNS.
 
 \subsection{Pacotes usados por DNS}
+Para testar a configuração atrás referida, usou-se o comando ping para o endereço de domínio \texttt{www.google.pt} e observou-se quer o output na linha de comandos quer os pacotes trocados com o servidor de DNS usando o wireshark.
+É feito um pedido ao servidor de DNS para que este lhe forneça informações que tenha acerca do endereço de domínio enviado, neste caso \texttt{www.google.pt} e o servidor responde com o tempo de vida, o tamanho dos dados e com o valor do endereço de IP neste caso com 4 byes e com o valor do endereço de IP.
+
+\begin{labeling}{alligator}
+\item DNS query:
+$$www.google.pt:\ type\ A,\ class\ IN$$
+
+\item DNS answer:
+$$www.google.pt:\ type\ A,\ class\ IN,\ addr\ 195.8.11.212$$
+
+\end{labeling}
 
 \section{Experiência 7: Aplicação de download}
 A primeira parte do segundo trabalho laboratorial consistiu no desenvolvimento
